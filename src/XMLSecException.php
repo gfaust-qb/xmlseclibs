@@ -1,4 +1,9 @@
 <?php
+
+namespace RobRichards\XMLSecLibs;
+
+use Exception;
+
 /**
  * xmlseclibs.php
  *
@@ -37,11 +42,9 @@
  * @author    Robert Richards <rrichards@cdatazone.org>
  * @copyright 2007-2015 Robert Richards <rrichards@cdatazone.org>
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version   2.1.0-dev
  */
 
-$xmlseclibs_srcdir = dirname(__FILE__) . '/src/';
-require $xmlseclibs_srcdir . '/XMLSecException.php';
-require $xmlseclibs_srcdir . '/XMLSecurityKey.php';
-require $xmlseclibs_srcdir . '/XMLSecurityDSig.php';
-require $xmlseclibs_srcdir . '/XMLSecEnc.php';
+class XMLSecException extends \Exception{
+
+}
+ 

@@ -3,7 +3,7 @@ namespace RobRichards\XMLSecLibs;
 
 use DomDocument;
 use DomNode;
-use DomXPath;
+use DOMElement;
 use Exception;
 
 /**
@@ -94,7 +94,7 @@ class XMLSecEnc
     public function addReference($name, $node, $type)
     {
         if (! $node instanceOf DOMNode) {
-            throw new Exception('$node is not of type DOMNode');
+            throw new XMLSecException('$node is not of type DOMNode');
         }
         $curencdoc = $this->encdoc;
         $this->_resetTemplate();
@@ -126,17 +126,17 @@ class XMLSecEnc
     {
         $data = '';
         if (empty($this->rawNode)) {
-            throw new Exception('Node to encrypt has not been set');
+            throw new XMLSecException('Node to encrypt has not been set');
         }
         if (! $objKey instanceof XMLSecurityKey) {
-            throw new Exception('Invalid Key');
+            throw new XMLSecException('Invalid Key');
         }
         $doc = $this->rawNode->ownerDocument;
         $xPath = new DOMXPath($this->encdoc);
         $objList = $xPath->query('/xenc:EncryptedData/xenc:CipherData/xenc:CipherValue');
         $cipherValue = $objList->item(0);
         if ($cipherValue == null) {
-            throw new Exception('Error locating CipherValue element within template');
+            throw new XMLSecException('Error locating CipherValue element within template');
         }
         switch ($this->type) {
             case (self::Element):
@@ -151,7 +151,7 @@ class XMLSecEnc
                 $this->encdoc->documentElement->setAttribute('Type', self::Content);
                 break;
             default:
-                throw new Exception('Type is currently not supported');
+                throw new XMLSecException('Type is currently not supported');
         }
 
         $encMethod = $this->encdoc->documentElement->appendChild($this->encdoc->createElementNS(self::XMLENCNS, 'xenc:EncryptionMethod'));
@@ -199,6 +199,10 @@ class XMLSecEnc
             try {
                 $encNode = $this->encryptNode($objKey);
                 $this->references[$name]["encnode"] = $encNode;
+            } catch (XMLSecException $e) {
+                $this->rawNode = $curRawNode;
+                $this->type = $curType;
+                throw $e;
             } catch (Exception $e) {
                 $this->rawNode = $curRawNode;
                 $this->type = $curType;
@@ -217,7 +221,7 @@ class XMLSecEnc
     public function getCipherValue()
     {
         if (empty($this->rawNode)) {
-            throw new Exception('Node to decrypt has not been set');
+            throw new XMLSecException('Node to decrypt has not been set');
         }
 
         $doc = $this->rawNode->ownerDocument;
@@ -251,7 +255,7 @@ class XMLSecEnc
     public function decryptNode($objKey, $replace=true)
     {
         if (! $objKey instanceof XMLSecurityKey) {
-            throw new Exception('Invalid Key');
+            throw new XMLSecException('Invalid Key');
         }
 
         $encryptedData = $this->getCipherValue();
@@ -286,7 +290,7 @@ class XMLSecEnc
                 return $decrypted;
             }
         } else {
-            throw new Exception("Cannot locate encrypted data");
+            throw new XMLSecException("Cannot locate encrypted data");
         }
     }
 
@@ -301,7 +305,7 @@ class XMLSecEnc
     public function encryptKey($srcKey, $rawKey, $append=true)
     {
         if ((! $srcKey instanceof XMLSecurityKey) || (! $rawKey instanceof XMLSecurityKey)) {
-            throw new Exception('Invalid Key');
+            throw new XMLSecException('Invalid Key');
         }
         $strEncKey = base64_encode($srcKey->encryptData($rawKey->key));
         $root = $this->encdoc->documentElement;
@@ -339,10 +343,10 @@ class XMLSecEnc
     public function decryptKey($encKey)
     {
         if (! $encKey->isEncrypted) {
-            throw new Exception("Key is not Encrypted");
+            throw new XMLSecException("Key is not Encrypted");
         }
         if (empty($encKey->key)) {
-            throw new Exception("Key is missing data to perform the decryption");
+            throw new XMLSecException("Key is missing data to perform the decryption");
         }
         return $this->decryptNode($encKey, false);
     }
@@ -389,6 +393,8 @@ class XMLSecEnc
                    $attrAlgorithm = $encmeth->getAttribute("Algorithm");
                 try {
                     $objKey = new XMLSecurityKey($attrAlgorithm, array('type' => 'private'));
+                } catch (XMLSecException $e) {
+                    return null;
                 } catch (Exception $e) {
                     return null;
                 }
@@ -436,7 +442,7 @@ class XMLSecEnc
                     foreach ($child->childNodes AS $keyval) {
                         switch ($keyval->localName) {
                             case 'DSAKeyValue':
-                                throw new Exception("DSAKeyValue currently not supported");
+                                throw new XMLSecException("DSAKeyValue currently not supported");
                             case 'RSAKeyValue':
                                 $modulus = null;
                                 $exponent = null;
@@ -447,7 +453,7 @@ class XMLSecEnc
                                     $exponent = base64_decode($exponentNode->nodeValue);
                                 }
                                 if (empty($modulus) || empty($exponent)) {
-                                    throw new Exception("Missing Modulus or Exponent");
+                                    throw new XMLSecException("Missing Modulus or Exponent");
                                 }
                                 $publicKey = XMLSecurityKey::convertRSA($modulus, $exponent);
                                 $objBaseKey->loadKey($publicKey);
@@ -471,7 +477,7 @@ class XMLSecEnc
                     $query = "//xmlsecenc:EncryptedKey[@Id='$id']";
                     $keyElement = $xpath->query($query)->item(0);
                     if (!$keyElement) {
-                        throw new Exception("Unable to locate EncryptedKey with @Id='$id'.");
+                        throw new XMLSecException("Unable to locate EncryptedKey with @Id='$id'.");
                     }
 
                     return XMLSecurityKey::fromEncryptedKeyElement($keyElement);

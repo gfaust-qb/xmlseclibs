@@ -146,7 +146,7 @@ class XMLSecurityKey
                         break;
                     }
                 }
-                throw new Exception('Certificate "type" (private/public) must be passed via parameters');
+                throw new XMLSecException('Certificate "type" (private/public) must be passed via parameters');
             case (self::RSA_OAEP_MGF1P):
                 $this->cryptParams['library'] = 'openssl';
                 $this->cryptParams['padding'] = OPENSSL_PKCS1_OAEP_PADDING;
@@ -158,7 +158,7 @@ class XMLSecurityKey
                         break;
                     }
                 }
-                throw new Exception('Certificate "type" (private/public) must be passed via parameters');
+                throw new XMLSecException('Certificate "type" (private/public) must be passed via parameters');
             case (self::RSA_SHA1):
                 $this->cryptParams['library'] = 'openssl';
                 $this->cryptParams['method'] = 'http://www.w3.org/2000/09/xmldsig#rsa-sha1';
@@ -169,7 +169,7 @@ class XMLSecurityKey
                         break;
                     }
                 }
-                throw new Exception('Certificate "type" (private/public) must be passed via parameters');
+                throw new XMLSecException('Certificate "type" (private/public) must be passed via parameters');
             case (self::RSA_SHA256):
                 $this->cryptParams['library'] = 'openssl';
                 $this->cryptParams['method'] = 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256';
@@ -181,7 +181,7 @@ class XMLSecurityKey
                         break;
                     }
                 }
-                throw new Exception('Certificate "type" (private/public) must be passed via parameters');
+                throw new XMLSecException('Certificate "type" (private/public) must be passed via parameters');
             case (self::RSA_SHA384):
                 $this->cryptParams['library'] = 'openssl';
                 $this->cryptParams['method'] = 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha384';
@@ -193,7 +193,7 @@ class XMLSecurityKey
                         break;
                     }
                 }
-                throw new Exception('Certificate "type" (private/public) must be passed via parameters');
+                throw new XMLSecException('Certificate "type" (private/public) must be passed via parameters');
             case (self::RSA_SHA512):
                 $this->cryptParams['library'] = 'openssl';
                 $this->cryptParams['method'] = 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha512';
@@ -205,13 +205,13 @@ class XMLSecurityKey
                         break;
                     }
                 }
-                throw new Exception('Certificate "type" (private/public) must be passed via parameters');
+                throw new XMLSecException('Certificate "type" (private/public) must be passed via parameters');
             case (self::HMAC_SHA1):
                 $this->cryptParams['library'] = $type;
                 $this->cryptParams['method'] = 'http://www.w3.org/2000/09/xmldsig#hmac-sha1';
                 break;
             default:
-                throw new Exception('Invalid Key Type');
+                throw new XMLSecException('Invalid Key Type');
         }
         $this->type = $type;
     }
@@ -242,7 +242,7 @@ class XMLSecurityKey
     public function generateSessionKey()
     {
         if (!isset($this->cryptParams['keysize'])) {
-            throw new Exception('Unknown key size for type "' . $this->type . '".');
+            throw new XMLSecException('Unknown key size for type "' . $this->type . '".');
         }
         $keysize = $this->cryptParams['keysize'];
         
@@ -337,7 +337,7 @@ class XMLSecurityKey
                 }
                 $this->key = openssl_get_publickey($this->key);
                 if (! $this->key) {
-                    throw new Exception('Unable to extract public key');
+                    throw new XMLSecException('Unable to extract public key');
                 }
             } else {
                 $this->key = openssl_get_privatekey($this->key, $this->passphrase);
@@ -347,12 +347,12 @@ class XMLSecurityKey
             switch ($this->type) {
                 case (self::AES256_CBC):
                     if (strlen($this->key) < 25) {
-                        throw new Exception('Key must contain at least 25 characters for this cipher');
+                        throw new XMLSecException('Key must contain at least 25 characters for this cipher');
                     }
                     break;
                 case (self::AES192_CBC):
                     if (strlen($this->key) < 17) {
-                        throw new Exception('Key must contain at least 17 characters for this cipher');
+                        throw new XMLSecException('Key must contain at least 17 characters for this cipher');
                     }
                     break;
             }
@@ -419,11 +419,11 @@ class XMLSecurityKey
     {
         if ($this->cryptParams['type'] == 'public') {
             if (! openssl_public_encrypt($data, $encrypted_data, $this->key, $this->cryptParams['padding'])) {
-                throw new Exception('Failure encrypting Data');
+                throw new XMLSecException('Failure encrypting Data');
             }
         } else {
             if (! openssl_private_encrypt($data, $encrypted_data, $this->key, $this->cryptParams['padding'])) {
-                throw new Exception('Failure encrypting Data');
+                throw new XMLSecException('Failure encrypting Data');
             }
         }
         return $encrypted_data;
@@ -440,11 +440,11 @@ class XMLSecurityKey
     {
         if ($this->cryptParams['type'] == 'public') {
             if (! openssl_public_decrypt($data, $decrypted, $this->key, $this->cryptParams['padding'])) {
-                throw new Exception('Failure decrypting Data');
+                throw new XMLSecException('Failure decrypting Data');
             }
         } else {
             if (! openssl_private_decrypt($data, $decrypted, $this->key, $this->cryptParams['padding'])) {
-                throw new Exception('Failure decrypting Data');
+                throw new XMLSecException('Failure decrypting Data');
             }
         }
         return $decrypted;
@@ -464,7 +464,7 @@ class XMLSecurityKey
             $algo = $this->cryptParams['digest'];
         }
         if (! openssl_sign($data, $signature, $this->key, $algo)) {
-            throw new Exception('Failure Signing Data: ' . openssl_error_string() . ' - ' . $algo);
+            throw new XMLSecException('Failure Signing Data: ' . openssl_error_string() . ' - ' . $algo);
         }
         return $signature;
     }
@@ -679,7 +679,7 @@ class XMLSecurityKey
         $objenc = new XMLSecEnc();
         $objenc->setNode($element);
         if (! $objKey = $objenc->locateKey()) {
-            throw new Exception("Unable to locate algorithm for this Encrypted Key");
+            throw new XMLSecException("Unable to locate algorithm for this Encrypted Key");
         }
         $objKey->isEncrypted = true;
         $objKey->encryptedCtx = $objenc;
