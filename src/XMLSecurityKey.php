@@ -2,9 +2,7 @@
 namespace RobRichards\XMLSecLibs;
 
 use DomElement;
-use RobRichards\XMLSecLibs\Extension\Hash_Hmac;
-use RobRichards\XMLSecLibs\Extension\Mcrypt;
-use RobRichards\XMLSecLibs\Extension\OpenSSL;
+use Exception;
 
 /**
  * xmlseclibs.php
@@ -61,14 +59,37 @@ class XMLSecurityKey
     const RSA_SHA512 = 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha512';
     const HMAC_SHA1 = 'http://www.w3.org/2000/09/xmldsig#hmac-sha1';
 
+    /** @var array */
     private $cryptParams = array();
+
+    /** @var int|string */
     public $type = 0;
+
+    /** @var mixed|null */
     public $key = null;
+
+    /** @var string  */
     public $passphrase = "";
+
+    /** @var string  */
+    public $iv = null;
+
+    /** @var string */
     public $name = null;
+
+    /**
+     * @var mixed|null
+     * @deprecated
+     */
     public $keyChain = null;
+
+    /** @var bool */
     public $isEncrypted = false;
+
+    /** @var XMLSecEnc */
     public $encryptedCtx = null;
+
+    /** @var mixed|null */
     public $guid = null;
 
     /**
@@ -81,11 +102,8 @@ class XMLSecurityKey
     private $X509Thumbprint = null;
 
     /**
-     * @param $type
-     *
-     * @param array|null $params
-     *
-     * @throws XMLSecLibsException
+     * @param string $type
+     * @param null|array $params
      */
     public function __construct($type, $params=null)
     {
@@ -128,7 +146,7 @@ class XMLSecurityKey
                         break;
                     }
                 }
-                throw new XMLSecLibsException('Certificate "type" (private/public) must be passed via parameters');
+                throw new Exception('Certificate "type" (private/public) must be passed via parameters');
             case (self::RSA_OAEP_MGF1P):
                 $this->cryptParams['library'] = 'openssl';
                 $this->cryptParams['padding'] = OPENSSL_PKCS1_OAEP_PADDING;
@@ -140,7 +158,7 @@ class XMLSecurityKey
                         break;
                     }
                 }
-                throw new XMLSecLibsException('Certificate "type" (private/public) must be passed via parameters');
+                throw new Exception('Certificate "type" (private/public) must be passed via parameters');
             case (self::RSA_SHA1):
                 $this->cryptParams['library'] = 'openssl';
                 $this->cryptParams['method'] = 'http://www.w3.org/2000/09/xmldsig#rsa-sha1';
@@ -151,7 +169,7 @@ class XMLSecurityKey
                         break;
                     }
                 }
-                throw new XMLSecLibsException('Certificate "type" (private/public) must be passed via parameters');
+                throw new Exception('Certificate "type" (private/public) must be passed via parameters');
             case (self::RSA_SHA256):
                 $this->cryptParams['library'] = 'openssl';
                 $this->cryptParams['method'] = 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256';
@@ -163,7 +181,7 @@ class XMLSecurityKey
                         break;
                     }
                 }
-                throw new XMLSecLibsException('Certificate "type" (private/public) must be passed via parameters');
+                throw new Exception('Certificate "type" (private/public) must be passed via parameters');
             case (self::RSA_SHA384):
                 $this->cryptParams['library'] = 'openssl';
                 $this->cryptParams['method'] = 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha384';
@@ -175,7 +193,7 @@ class XMLSecurityKey
                         break;
                     }
                 }
-                throw new XMLSecLibsException('Certificate "type" (private/public) must be passed via parameters');
+                throw new Exception('Certificate "type" (private/public) must be passed via parameters');
             case (self::RSA_SHA512):
                 $this->cryptParams['library'] = 'openssl';
                 $this->cryptParams['method'] = 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha512';
@@ -187,13 +205,13 @@ class XMLSecurityKey
                         break;
                     }
                 }
-                throw new XMLSecLibsException('Certificate "type" (private/public) must be passed via parameters');
+                throw new Exception('Certificate "type" (private/public) must be passed via parameters');
             case (self::HMAC_SHA1):
                 $this->cryptParams['library'] = $type;
                 $this->cryptParams['method'] = 'http://www.w3.org/2000/09/xmldsig#hmac-sha1';
                 break;
             default:
-                throw new XMLSecLibsException('Invalid Key Type');
+                throw new Exception('Invalid Key Type');
         }
         $this->type = $type;
     }
@@ -215,14 +233,16 @@ class XMLSecurityKey
     }
 
     /**
+     * Generates a session key using the openssl-extension or using the mcrypt-extension as a fallback.
+     * In case of using DES3-CBC the key is checked for a proper parity bits set - Mcrypt doesn't care about the parity bits,
+     * but others may care.
      * @return string
-     *
-     * @throws XMLSecLibsException
+     * @throws \Exception
      */
     public function generateSessionKey()
     {
         if (!isset($this->cryptParams['keysize'])) {
-            throw new XMLSecLibsException('Unknown key size for type "' . $this->type . '".');
+            throw new Exception('Unknown key size for type "' . $this->type . '".');
         }
         $keysize = $this->cryptParams['keysize'];
         
@@ -230,7 +250,8 @@ class XMLSecurityKey
             /* We have PHP >= 5.3 - use openssl to generate session key. */
             $key = openssl_random_pseudo_bytes($keysize);
         } else {
-            throw new XMLSecLibsException('The openssl-extension is needed for generating a session key.');
+            /* Generating random key using iv generation routines */
+            $key = mcrypt_create_iv($keysize, MCRYPT_RAND);
         }
         
         if ($this->type === self::TRIPLEDES_CBC) {
@@ -253,8 +274,9 @@ class XMLSecurityKey
     }
 
     /**
-     * @param $cert
+     * Get the raw thumbprint of a certificate
      *
+     * @param string $cert
      * @return null|string
      */
     public static function getRawThumbprint($cert)
@@ -285,127 +307,253 @@ class XMLSecurityKey
     }
 
     /**
-     * @param $key
+     * Loads the given key, or - with isFile set true - the key from the keyfile.
      *
-     * @param bool|false $isFile
-     *
-     * @param bool|false $isCert
-     *
-     * @throws XMLSecLibsException
+     * @param string $key
+     * @param bool $isFile
+     * @param bool $isCert
+     * @throws \Exception
      */
-    public function loadKey($key, $isFile = false, $isCert = false)
+    public function loadKey($key, $isFile=false, $isCert = false)
     {
-        switch ($this->cryptParams['library']) {
-            case 'openssl':
-                $objExtension = new OpenSSL($this->cryptParams, $this->key);
-                $objExtension->setPassphrase($this->passphrase);
-                $objExtension->setType($this->type);
-                break;
-            case 'mcrypt':
-                $objExtension = new Mcrypt($this->cryptParams, $this->key);
-                $objExtension->setPassphrase($this->passphrase);
-                $objExtension->setType($this->type);
-                break;
-            default:
-                throw new XMLSecLibsException('Not implemented yet for this type.');
+        if ($isFile) {
+            $this->key = file_get_contents($key);
+        } else {
+            $this->key = $key;
         }
-        return $objExtension->loadKey($key, $isFile, $isCert);
+        if ($isCert) {
+            $this->key = openssl_x509_read($this->key);
+            openssl_x509_export($this->key, $str_cert);
+            $this->x509Certificate = $str_cert;
+            $this->key = $str_cert;
+        } else {
+            $this->x509Certificate = null;
+        }
+        if ($this->cryptParams['library'] == 'openssl') {
+            if ($this->cryptParams['type'] == 'public') {
+                if ($isCert) {
+                    /* Load the thumbprint if this is an X509 certificate. */
+                    $this->X509Thumbprint = self::getRawThumbprint($this->key);
+                }
+                $this->key = openssl_get_publickey($this->key);
+                if (! $this->key) {
+                    throw new Exception('Unable to extract public key');
+                }
+            } else {
+                $this->key = openssl_get_privatekey($this->key, $this->passphrase);
+            }
+        } else if ($this->cryptParams['cipher'] == MCRYPT_RIJNDAEL_128) {
+            /* Check key length */
+            switch ($this->type) {
+                case (self::AES256_CBC):
+                    if (strlen($this->key) < 25) {
+                        throw new Exception('Key must contain at least 25 characters for this cipher');
+                    }
+                    break;
+                case (self::AES192_CBC):
+                    if (strlen($this->key) < 17) {
+                        throw new Exception('Key must contain at least 17 characters for this cipher');
+                    }
+                    break;
+            }
+        }
     }
 
     /**
-     * @param $data
+     * Encrypts the given data (string) using the mcrypt-extension
      *
+     * @param string $data
+     * @return string
+     */
+    private function encryptMcrypt($data)
+    {
+        $td = mcrypt_module_open($this->cryptParams['cipher'], '', $this->cryptParams['mode'], '');
+        $this->iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
+        mcrypt_generic_init($td, $this->key, $this->iv);
+        if ($this->cryptParams['mode'] == MCRYPT_MODE_CBC) {
+            $bs = mcrypt_enc_get_block_size($td);
+            for ($datalen0 = $datalen = strlen($data); (($datalen % $bs) != ($bs - 1)); $datalen++)
+                $data .= chr(mt_rand(1, 127));
+            $data .= chr($datalen - $datalen0 + 1);
+        }
+        $encrypted_data = $this->iv.mcrypt_generic($td, $data);
+        mcrypt_generic_deinit($td);
+        mcrypt_module_close($td);
+        return $encrypted_data;
+    }
+
+    /**
+     * Decrypts the given data (string) using the mcrypt-extension
+     *
+     * @param string $data
+     * @return string
+     */
+    private function decryptMcrypt($data)
+    {
+        $td = mcrypt_module_open($this->cryptParams['cipher'], '', $this->cryptParams['mode'], '');
+        $iv_length = mcrypt_enc_get_iv_size($td);
+
+        $this->iv = substr($data, 0, $iv_length);
+        $data = substr($data, $iv_length);
+
+        mcrypt_generic_init($td, $this->key, $this->iv);
+        $decrypted_data = mdecrypt_generic($td, $data);
+        mcrypt_generic_deinit($td);
+        mcrypt_module_close($td);
+        if ($this->cryptParams['mode'] == MCRYPT_MODE_CBC) {
+            $dataLen = strlen($decrypted_data);
+            $paddingLength = substr($decrypted_data, $dataLen - 1, 1);
+            $decrypted_data = substr($decrypted_data, 0, $dataLen - ord($paddingLength));
+        }
+        return $decrypted_data;
+    }
+
+    /**
+     * Encrypts the given data (string) using the openssl-extension
+     *
+     * @param string $data
+     * @return mixed
+     * @throws \Exception
+     */
+    private function encryptOpenSSL($data)
+    {
+        if ($this->cryptParams['type'] == 'public') {
+            if (! openssl_public_encrypt($data, $encrypted_data, $this->key, $this->cryptParams['padding'])) {
+                throw new Exception('Failure encrypting Data');
+            }
+        } else {
+            if (! openssl_private_encrypt($data, $encrypted_data, $this->key, $this->cryptParams['padding'])) {
+                throw new Exception('Failure encrypting Data');
+            }
+        }
+        return $encrypted_data;
+    }
+
+    /**
+     * Decrypts the given data (string) using the openssl-extension
+     *
+     * @param string $data
+     * @return mixed
+     * @throws \Exception
+     */
+    private function decryptOpenSSL($data)
+    {
+        if ($this->cryptParams['type'] == 'public') {
+            if (! openssl_public_decrypt($data, $decrypted, $this->key, $this->cryptParams['padding'])) {
+                throw new Exception('Failure decrypting Data');
+            }
+        } else {
+            if (! openssl_private_decrypt($data, $decrypted, $this->key, $this->cryptParams['padding'])) {
+                throw new Exception('Failure decrypting Data');
+            }
+        }
+        return $decrypted;
+    }
+
+    /**
+     * Signs the given data (string) using the openssl-extension
+     *
+     * @param string $data
+     * @return mixed
+     * @throws \Exception
+     */
+    private function signOpenSSL($data)
+    {
+        $algo = OPENSSL_ALGO_SHA1;
+        if (! empty($this->cryptParams['digest'])) {
+            $algo = $this->cryptParams['digest'];
+        }
+        if (! openssl_sign($data, $signature, $this->key, $algo)) {
+            throw new Exception('Failure Signing Data: ' . openssl_error_string() . ' - ' . $algo);
+        }
+        return $signature;
+    }
+
+    /**
+     * Verifies the given data (string) belonging to the given signature using the openssl-extension
+     *
+     * @param string $data
+     * @param string $signature
+     * @return int
+     */
+    private function verifyOpenSSL($data, $signature)
+    {
+        $algo = OPENSSL_ALGO_SHA1;
+        if (! empty($this->cryptParams['digest'])) {
+            $algo = $this->cryptParams['digest'];
+        }
+        return openssl_verify($data, $signature, $this->key, $algo);
+    }
+
+    /**
+     * Encrypts the given data (string) using the regarding php-extension, depending on the library assigned to algorithm in the contructor.
+     *
+     * @param string $data
      * @return mixed|string
-     *
-     * @throws XMLSecLibsException
      */
     public function encryptData($data)
     {
         switch ($this->cryptParams['library']) {
             case 'mcrypt':
-                $objExtension = new Mcrypt($this->cryptParams, $this->key);
-                break;
+                return $this->encryptMcrypt($data);
             case 'openssl':
-                $objExtension = new OpenSSL($this->cryptParams, $this->key);
-                break;
-            default:
-                throw new XMLSecLibsException('No, unknown or unsupported crypto-library called for encryption.');
+                return $this->encryptOpenSSL($data);
         }
-        return $objExtension->encrypt($data);
     }
 
     /**
+     * Decrypts the given data (string) using the regarding php-extension, depending on the library assigned to algorithm in the contructor.
+     *
      * @param $data
-     *
      * @return mixed|string
-     *
-     * @throws XMLSecLibsException
      */
     public function decryptData($data)
     {
         switch ($this->cryptParams['library']) {
             case 'mcrypt':
-                $objExtension = new Mcrypt($this->cryptParams, $this->key);
-                break;
+                return $this->decryptMcrypt($data);
             case 'openssl':
-                $objExtension = new OpenSSL($this->cryptParams, $this->key);
-                break;
-            default:
-                throw new XMLSecLibsException('No, unknown or unsupported crypto-library called for decryption.');
+                return $this->decryptOpenSSL($data);
         }
-        return $objExtension->decrypt($data);
     }
 
     /**
-     * @param $data
+     * Signs the data (string) using the extension assigned to the type in the constructor.
      *
+     * @param string $data
      * @return mixed|string
-     *
-     * @throws XMLSecLibsException
      */
     public function signData($data)
     {
         switch ($this->cryptParams['library']) {
             case 'openssl':
-                $objExtension = new OpenSSL($this->cryptParams, $this->key);
-                break;
+                return $this->signOpenSSL($data);
             case (self::HMAC_SHA1):
-                $objExtension = new Hash_Hmac($this->cryptParams, $this->key);
-                break;
-            default:
-                throw new XMLSecLibsException('No, unknown or unsupported crypto-library called for decryption.');
+                return hash_hmac("sha1", $data, $this->key, true);
         }
-        return $objExtension->signData($data);
     }
 
     /**
-     * @param $data
-     *
-     * @param $signature
-     *
-     * @throws XMLSecLibsException
-     *
+     * Verifies the data (string) against the given signature using the extension assigned to the type in the constructor.
+     * @param string $data
+     * @param string $signature
      * @return bool|int
      */
     public function verifySignature($data, $signature)
     {
         switch ($this->cryptParams['library']) {
             case 'openssl':
-                $objExtension = new OpenSSL($this->cryptParams, $this->key);
-                break;
+                return $this->verifyOpenSSL($data, $signature);
             case (self::HMAC_SHA1):
-                $objExtension = new Hash_Hmac($this->cryptParams, $this->key);
-                break;
-            default:
-                throw new XMLSecLibsException('None, unknown or unsupported option for verifying called.');
+                $expectedSignature = hash_hmac("sha1", $data, $this->key, true);
+                return strcmp($signature, $expectedSignature) == 0;
         }
-        return $objExtension->verifySignature($data, $signature);
     }
 
     /**
      * @deprecated
-     *
      * @see getAlgorithm()
+     * @return mixed
      */
     public function getAlgorith()
     {
@@ -413,7 +561,7 @@ class XMLSecurityKey
     }
 
     /**
-     * @return string|null
+     * @return mixed
      */
     public function getAlgorithm()
     {
@@ -421,10 +569,9 @@ class XMLSecurityKey
     }
 
     /**
-     * @param $type
      *
+     * @param int $type
      * @param $string
-     *
      * @return null|string
      */
     public static function makeAsnSegment($type, $string)
@@ -453,7 +600,12 @@ class XMLSecurityKey
         return $output;
     }
 
-    /* Modulus and Exponent must already be base64 decoded */
+    /**
+     * @hint Modulus and Exponent must already be base64 decoded
+     * @param string $modulus
+     * @param string $exponent
+     * @return string
+     */
     public static function convertRSA($modulus, $exponent)
     {
         /* make an ASN publicKeyInfo */
@@ -475,6 +627,10 @@ class XMLSecurityKey
         return $encoding."-----END PUBLIC KEY-----\n";
     }
 
+    /**
+     * @deprecated
+     * @param mixed $parent
+     */
     public function serializeKey($parent)
     {
 
@@ -515,8 +671,6 @@ class XMLSecurityKey
      *
      * @param DOMElement $element The EncryptedKey-element.
      *
-     * @throws XMLSecLibsException
-     *
      * @return XMLSecurityKey The new key.
      */
     public static function fromEncryptedKeyElement(DOMElement $element)
@@ -525,7 +679,7 @@ class XMLSecurityKey
         $objenc = new XMLSecEnc();
         $objenc->setNode($element);
         if (! $objKey = $objenc->locateKey()) {
-            throw new XMLSecLibsException("Unable to locate algorithm for this Encrypted Key");
+            throw new Exception("Unable to locate algorithm for this Encrypted Key");
         }
         $objKey->isEncrypted = true;
         $objKey->encryptedCtx = $objenc;
