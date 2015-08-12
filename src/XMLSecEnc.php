@@ -1,9 +1,10 @@
 <?php
 namespace RobRichards\XMLSecLibs;
 
-use DomDocument;
-use DomNode;
+use DOMDocument;
 use DOMElement;
+use DOMNode;
+use DOMXPath;
 use Exception;
 
 /**

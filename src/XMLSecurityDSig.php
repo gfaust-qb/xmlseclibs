@@ -2,9 +2,9 @@
 namespace RobRichards\XMLSecLibs;
 
 use DomDocument;
-use DomXPath;
-use DomNode;
 use DomElement;
+use DomNode;
+use DomXPath;
 use Exception;
 
 /**
