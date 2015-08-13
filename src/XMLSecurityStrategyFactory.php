@@ -52,7 +52,7 @@ class XMLSecurityStrategyFactory implements XMLSecurityStrategy {
      */
     public function __construct($type, XMLSecurityParams $xmlSecurityParams)
     {
-        switch((string)$type) {
+        switch ($xmlSecurityParams->library) {
             case 'mcrypt':
                 $this->strategy = new XMLSecurityStrategyMcrypt($xmlSecurityParams);
                 break;
