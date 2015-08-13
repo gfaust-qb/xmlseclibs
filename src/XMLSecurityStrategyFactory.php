@@ -59,6 +59,9 @@ class XMLSecurityStrategyFactory implements XMLSecurityStrategy {
             case 'openssl':
                 $this->strategy = new XMLSecurityStrategyOpenssl($xmlSecurityParams);
                 break;
+            case XMLSecurityKey::HMAC_SHA1:
+                $this->strategy = new XMLSecurityStrategyHmac($xmlSecurityParams);
+                break;
             default:
                 throw new XMLSecException('Unsupported strategy: ' . print_r($type,true));
         }
