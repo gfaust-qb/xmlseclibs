@@ -41,7 +41,197 @@ namespace RobRichards\XMLSecLibs;
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  */
 
-class XMLSecurityParams extends \ArrayObject {
+class XMLSecurityParams
+{
+
+    /** @var string */
+    private $certificateType = '';
+
+    /** @var string */
+    private $library = '';
+
+    /** @var string */
+    private $mode = '';
+
+    /** @var string */
+    private $method = '';
+
+    /** @var string */
+    private $digest = '';
+
+    /** @var string */
+    private $padding = '';
+
+    /** @var string */
+    private $cipher = '';
+
+    /** @var int */
+    private $keysize = 0;
+
+    /** @var string */
+    private $hash = '';
+
+    /**
+     * @return string
+     */
+    public function getCertificateType()
+    {
+        return $this->certificateType;
+    }
+
+    /**
+     * @param string $certificateType
+     * @return XMLSecurityParams
+     */
+    public function setCertificateType($certificateType)
+    {
+        $this->certificateType = $certificateType;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLibrary()
+    {
+        return $this->library;
+    }
+
+    /**
+     * @param string $library
+     * @return XMLSecurityParams
+     */
+    public function setLibrary($library)
+    {
+        $this->library = $library;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMode()
+    {
+        return $this->mode;
+    }
+
+    /**
+     * @param string $mode
+     * @return XMLSecurityParams
+     */
+    public function setMode($mode)
+    {
+        $this->mode = $mode;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMethod()
+    {
+        return $this->method;
+    }
+
+    /**
+     * @param string $method
+     * @return XMLSecurityParams
+     */
+    public function setMethod($method)
+    {
+        $this->method = $method;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDigest()
+    {
+        return $this->digest;
+    }
+
+    /**
+     * @param string $digest
+     * @return XMLSecurityParams
+     */
+    public function setDigest($digest)
+    {
+        $this->digest = $digest;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPadding()
+    {
+        return $this->padding;
+    }
+
+    /**
+     * @param string $padding
+     * @return XMLSecurityParams
+     */
+    public function setPadding($padding)
+    {
+        $this->padding = $padding;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCipher()
+    {
+        return $this->cipher;
+    }
+
+    /**
+     * @param string $cipher
+     * @return XMLSecurityParams
+     */
+    public function setCipher($cipher)
+    {
+        $this->cipher = $cipher;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getKeysize()
+    {
+        return $this->keysize;
+    }
+
+    /**
+     * @param int $keysize
+     * @return XMLSecurityParams
+     */
+    public function setKeysize($keysize)
+    {
+        $this->keysize = $keysize;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHash()
+    {
+        return $this->hash;
+    }
+
+    /**
+     * @param string $hash
+     * @return XMLSecurityParams
+     */
+    public function setHash($hash)
+    {
+        $this->hash = $hash;
+        return $this;
+    }
 
 
 }

@@ -47,69 +47,27 @@ class XMLSecurityStrategyFactory implements XMLSecurityStrategy {
     private $strategy = null;
 
     /**
-     * @param $type
-     * @param XMLSecurityParams $params
+     * @param XMLSecurityParams $xmlSecurityParams
+     * @throws XMLSecException
      */
-    public function __construct($type, XMLSecurityParams $xmlSecurityParams)
+    public function __construct(XMLSecurityParams $xmlSecurityParams)
     {
-        switch ($xmlSecurityParams->library) {
-            case 'mcrypt':
+        switch ($xmlSecurityParams->getLibrary()) {
+            case XMLSecurityKey::PHP_EXTENSION_MCRYPT:
                 $this->strategy = new XMLSecurityStrategyMcrypt($xmlSecurityParams);
                 break;
-            case 'openssl':
+            case XMLSecurityKey::PHP_EXTENSION_OPENSSL:
                 $this->strategy = new XMLSecurityStrategyOpenssl($xmlSecurityParams);
                 break;
             case XMLSecurityKey::HMAC_SHA1:
                 $this->strategy = new XMLSecurityStrategyHmac($xmlSecurityParams);
                 break;
             default:
-                throw new XMLSecException('Unsupported strategy: ' . print_r($type,true));
+                throw new XMLSecException('Unsupported strategy: ' . print_r($xmlSecurityParams->getLibrary(), true));
         }
+
+        return $this->strategy;
     }
 
-    /**
-     * @param string $data
-     * @return mixed
-     */
-    public function encryptData($data)
-    {
-        return $this->strategy->encryptData($data);
-    }
-
-    /**
-     * @param string $data
-     * @return mixed
-     */
-    public function decryptData($data)
-    {
-        return $this->strategy->decryptData($data);
-    }
-
-    /**
-     * @return string
-     */
-    public function generateSessionKey()
-    {
-        return $this->strategy->generateSessionKey();
-    }
-
-    /**
-     * @param string $data
-     * @param string $signature
-     * @return int
-     */
-    public function verifySignature($data, $signature)
-    {
-        return $this->strategy->verifySignature($data, $signature);
-    }
-
-    /**
-     * @param string $data
-     * @return mixed
-     */
-    public function signData($data)
-    {
-        return $this->strategy->signData($data);
-    }
 }
  
