@@ -42,6 +42,7 @@
 
 $xmlseclibs_srcdir = dirname(__FILE__) . '/src/';
 require $xmlseclibs_srcdir . '/XMLSecurityStrategy.php';
+require $xmlseclibs_srcdir . '/XMLSecurityParams.php';
 require $xmlseclibs_srcdir . '/XMLSecurityStrategyBase.php';
 require $xmlseclibs_srcdir . '/XMLSecurityStrategyFactory.php';
 require $xmlseclibs_srcdir . '/XMLSecurityStrategyMcrypt.php';
