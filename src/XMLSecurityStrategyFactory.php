@@ -1,4 +1,6 @@
 <?php
+namespace RobRichards\XMLSecLibs;
+
 /**
  * xmlseclibs.php
  *
@@ -37,14 +39,74 @@
  * @author    Robert Richards <rrichards@cdatazone.org>
  * @copyright 2007-2015 Robert Richards <rrichards@cdatazone.org>
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version   2.1.0-dev
  */
 
-$xmlseclibs_srcdir = dirname(__FILE__) . '/src/';
-require $xmlseclibs_srcdir . '/XMLSecurityStrategy.php';
-require $xmlseclibs_srcdir . '/XMLSecurityStrategyMcrypt.php';
-require $xmlseclibs_srcdir . '/XMLSecurityStrategyOpenssl.php';
-require $xmlseclibs_srcdir . '/XMLSecException.php';
-require $xmlseclibs_srcdir . '/XMLSecurityKey.php';
-require $xmlseclibs_srcdir . '/XMLSecurityDSig.php';
-require $xmlseclibs_srcdir . '/XMLSecEnc.php';
+class XMLSecurityStrategyFactory implements XMLSecurityStrategy {
+
+    /** @var XMLSecurityStrategyBase */
+    private $strategy = null;
+
+    /**
+     * @param $type
+     * @param XMLSecurityParams $params
+     */
+    public function __construct($type, XMLSecurityParams $xmlSecurityParams)
+    {
+        switch((string)$type) {
+            case 'mcrypt':
+                $this->strategy = new XMLSecurityStrategyMcrypt($xmlSecurityParams);
+                break;
+            case 'openssl':
+                $this->strategy = new XMLSecurityStrategyOpenssl($xmlSecurityParams);
+                break;
+            default:
+                throw new XMLSecException('Unsupported strategy: ' . print_r($type,true));
+        }
+    }
+
+    /**
+     * @param string $data
+     * @return mixed
+     */
+    public function encryptData($data)
+    {
+        return $this->strategy->encryptData($data);
+    }
+
+    /**
+     * @param string $data
+     * @return mixed
+     */
+    public function decryptData($data)
+    {
+        return $this->strategy->decryptData($data);
+    }
+
+    /**
+     * @return string
+     */
+    public function generateSessionKey()
+    {
+        return $this->strategy->generateSessionKey();
+    }
+
+    /**
+     * @param string $data
+     * @param string $signature
+     * @return int
+     */
+    public function verifySignature($data, $signature)
+    {
+        return $this->strategy->verifySignature($data, $signature);
+    }
+
+    /**
+     * @param string $data
+     * @return mixed
+     */
+    public function signData($data)
+    {
+        return $this->strategy->signData($data);
+    }
+}
+ 

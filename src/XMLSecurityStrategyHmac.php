@@ -1,4 +1,6 @@
 <?php
+namespace RobRichards\XMLSecLibs;
+
 /**
  * xmlseclibs.php
  *
@@ -37,14 +39,18 @@
  * @author    Robert Richards <rrichards@cdatazone.org>
  * @copyright 2007-2015 Robert Richards <rrichards@cdatazone.org>
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version   2.1.0-dev
  */
 
-$xmlseclibs_srcdir = dirname(__FILE__) . '/src/';
-require $xmlseclibs_srcdir . '/XMLSecurityStrategy.php';
-require $xmlseclibs_srcdir . '/XMLSecurityStrategyMcrypt.php';
-require $xmlseclibs_srcdir . '/XMLSecurityStrategyOpenssl.php';
-require $xmlseclibs_srcdir . '/XMLSecException.php';
-require $xmlseclibs_srcdir . '/XMLSecurityKey.php';
-require $xmlseclibs_srcdir . '/XMLSecurityDSig.php';
-require $xmlseclibs_srcdir . '/XMLSecEnc.php';
+class XMLSecurityStrategyHmac extends XMLSecurityStrategyBase implements XMLSecurityStrategy{
+
+    public function encryptData($data)
+    {
+        return hash_hmac($algo, $data, $this->key, true);
+    }
+
+    public function decryptData($data)
+    {
+
+    }
+}
+ 

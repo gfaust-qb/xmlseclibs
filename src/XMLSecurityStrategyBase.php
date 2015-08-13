@@ -1,4 +1,6 @@
 <?php
+namespace RobRichards\XMLSecLibs;
+
 /**
  * xmlseclibs.php
  *
@@ -37,14 +39,76 @@
  * @author    Robert Richards <rrichards@cdatazone.org>
  * @copyright 2007-2015 Robert Richards <rrichards@cdatazone.org>
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version   2.1.0-dev
  */
 
-$xmlseclibs_srcdir = dirname(__FILE__) . '/src/';
-require $xmlseclibs_srcdir . '/XMLSecurityStrategy.php';
-require $xmlseclibs_srcdir . '/XMLSecurityStrategyMcrypt.php';
-require $xmlseclibs_srcdir . '/XMLSecurityStrategyOpenssl.php';
-require $xmlseclibs_srcdir . '/XMLSecException.php';
-require $xmlseclibs_srcdir . '/XMLSecurityKey.php';
-require $xmlseclibs_srcdir . '/XMLSecurityDSig.php';
-require $xmlseclibs_srcdir . '/XMLSecEnc.php';
+class XMLSecurityStrategyBase {
+
+    /** @var XMLSecurityParams */
+    protected $xmlSecurityParams = null;
+
+    /** @var string */
+    protected $key = '';
+
+    /** @var string */
+    protected $iv = '';
+
+    /**
+     * @param XMLSecurityParams $xmlSecurityParams
+     */
+    public function __construct(XMLSecurityParams $xmlSecurityParams)
+    {
+        $this->xmlSecurityParams = $xmlSecurityParams;
+    }
+
+    /**
+     * @param string $iv
+     */
+    public function setIv($iv)
+    {
+        $this->iv = $iv;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIv()
+    {
+        return $this->iv;
+    }
+
+    /**
+     * @param string $key
+     */
+    public function setKey($key)
+    {
+        $this->key = $key;
+    }
+
+    /**
+     * @return string
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
+
+    /**
+     * @param XMLSecurityParams $xmlSecurityParams
+     */
+    public function setXmlSecurityParams(XMLSecurityParams $xmlSecurityParams)
+    {
+        $this->xmlSecurityParams = $xmlSecurityParams;
+    }
+
+    /**
+     * @return XMLSecurityParams
+     */
+    public function getXmlSecurityParams()
+    {
+        return $this->xmlSecurityParams;
+    }
+
+
+
+}
+ 

@@ -1,7 +1,7 @@
 <?php
 namespace RobRichards\XMLSecLibs;
 
-use DomElement;
+use DOMElement;
 use Exception;
 
 /**
@@ -61,6 +61,9 @@ class XMLSecurityKey
 
     /** @var array */
     private $cryptParams = array();
+
+    /** @var XMLSecurityStrategy  */
+    private $xmlSecurityStrategy = null;
 
     /** @var int|string */
     public $type = 0;
@@ -214,6 +217,8 @@ class XMLSecurityKey
                 throw new XMLSecException('Invalid Key Type');
         }
         $this->type = $type;
+
+        $this->xmlSecurityStrategy = new XMLSecurityStrategyFactory($this->type, $this->cryptParams);
     }
 
     /**
@@ -241,36 +246,7 @@ class XMLSecurityKey
      */
     public function generateSessionKey()
     {
-        if (!isset($this->cryptParams['keysize'])) {
-            throw new XMLSecException('Unknown key size for type "' . $this->type . '".');
-        }
-        $keysize = $this->cryptParams['keysize'];
-        
-        if (function_exists('openssl_random_pseudo_bytes')) {
-            /* We have PHP >= 5.3 - use openssl to generate session key. */
-            $key = openssl_random_pseudo_bytes($keysize);
-        } else {
-            /* Generating random key using iv generation routines */
-            $key = mcrypt_create_iv($keysize, MCRYPT_RAND);
-        }
-        
-        if ($this->type === self::TRIPLEDES_CBC) {
-            /* Make sure that the generated key has the proper parity bits set.
-             * Mcrypt doesn't care about the parity bits, but others may care.
-            */
-            for ($i = 0; $i < strlen($key); $i++) {
-                $byte = ord($key[$i]) & 0xfe;
-                $parity = 1;
-                for ($j = 1; $j < 8; $j++) {
-                    $parity ^= ($byte >> $j) & 1;
-                }
-                $byte |= $parity;
-                $key[$i] = chr($byte);
-            }
-        }
-        
-        $this->key = $key;
-        return $key;
+        return $this->xmlSecurityStrategy->generateSessionKey();
     }
 
     /**
@@ -335,12 +311,12 @@ class XMLSecurityKey
                     /* Load the thumbprint if this is an X509 certificate. */
                     $this->X509Thumbprint = self::getRawThumbprint($this->key);
                 }
-                $this->key = openssl_get_publickey($this->key);
+                $this->key = openssl_pkey_get_public($this->key);
                 if (! $this->key) {
                     throw new XMLSecException('Unable to extract public key');
                 }
             } else {
-                $this->key = openssl_get_privatekey($this->key, $this->passphrase);
+                $this->key = openssl_pkey_get_private($this->key, $this->passphrase);
             }
         } else if ($this->cryptParams['cipher'] == MCRYPT_RIJNDAEL_128) {
             /* Check key length */
@@ -360,132 +336,6 @@ class XMLSecurityKey
     }
 
     /**
-     * Encrypts the given data (string) using the mcrypt-extension
-     *
-     * @param string $data
-     * @return string
-     */
-    private function encryptMcrypt($data)
-    {
-        $td = mcrypt_module_open($this->cryptParams['cipher'], '', $this->cryptParams['mode'], '');
-        $this->iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
-        mcrypt_generic_init($td, $this->key, $this->iv);
-        if ($this->cryptParams['mode'] == MCRYPT_MODE_CBC) {
-            $bs = mcrypt_enc_get_block_size($td);
-            for ($datalen0 = $datalen = strlen($data); (($datalen % $bs) != ($bs - 1)); $datalen++)
-                $data .= chr(mt_rand(1, 127));
-            $data .= chr($datalen - $datalen0 + 1);
-        }
-        $encrypted_data = $this->iv.mcrypt_generic($td, $data);
-        mcrypt_generic_deinit($td);
-        mcrypt_module_close($td);
-        return $encrypted_data;
-    }
-
-    /**
-     * Decrypts the given data (string) using the mcrypt-extension
-     *
-     * @param string $data
-     * @return string
-     */
-    private function decryptMcrypt($data)
-    {
-        $td = mcrypt_module_open($this->cryptParams['cipher'], '', $this->cryptParams['mode'], '');
-        $iv_length = mcrypt_enc_get_iv_size($td);
-
-        $this->iv = substr($data, 0, $iv_length);
-        $data = substr($data, $iv_length);
-
-        mcrypt_generic_init($td, $this->key, $this->iv);
-        $decrypted_data = mdecrypt_generic($td, $data);
-        mcrypt_generic_deinit($td);
-        mcrypt_module_close($td);
-        if ($this->cryptParams['mode'] == MCRYPT_MODE_CBC) {
-            $dataLen = strlen($decrypted_data);
-            $paddingLength = substr($decrypted_data, $dataLen - 1, 1);
-            $decrypted_data = substr($decrypted_data, 0, $dataLen - ord($paddingLength));
-        }
-        return $decrypted_data;
-    }
-
-    /**
-     * Encrypts the given data (string) using the openssl-extension
-     *
-     * @param string $data
-     * @return mixed
-     * @throws \Exception
-     */
-    private function encryptOpenSSL($data)
-    {
-        if ($this->cryptParams['type'] == 'public') {
-            if (! openssl_public_encrypt($data, $encrypted_data, $this->key, $this->cryptParams['padding'])) {
-                throw new XMLSecException('Failure encrypting Data');
-            }
-        } else {
-            if (! openssl_private_encrypt($data, $encrypted_data, $this->key, $this->cryptParams['padding'])) {
-                throw new XMLSecException('Failure encrypting Data');
-            }
-        }
-        return $encrypted_data;
-    }
-
-    /**
-     * Decrypts the given data (string) using the openssl-extension
-     *
-     * @param string $data
-     * @return mixed
-     * @throws \Exception
-     */
-    private function decryptOpenSSL($data)
-    {
-        if ($this->cryptParams['type'] == 'public') {
-            if (! openssl_public_decrypt($data, $decrypted, $this->key, $this->cryptParams['padding'])) {
-                throw new XMLSecException('Failure decrypting Data');
-            }
-        } else {
-            if (! openssl_private_decrypt($data, $decrypted, $this->key, $this->cryptParams['padding'])) {
-                throw new XMLSecException('Failure decrypting Data');
-            }
-        }
-        return $decrypted;
-    }
-
-    /**
-     * Signs the given data (string) using the openssl-extension
-     *
-     * @param string $data
-     * @return mixed
-     * @throws \Exception
-     */
-    private function signOpenSSL($data)
-    {
-        $algo = OPENSSL_ALGO_SHA1;
-        if (! empty($this->cryptParams['digest'])) {
-            $algo = $this->cryptParams['digest'];
-        }
-        if (! openssl_sign($data, $signature, $this->key, $algo)) {
-            throw new XMLSecException('Failure Signing Data: ' . openssl_error_string() . ' - ' . $algo);
-        }
-        return $signature;
-    }
-
-    /**
-     * Verifies the given data (string) belonging to the given signature using the openssl-extension
-     *
-     * @param string $data
-     * @param string $signature
-     * @return int
-     */
-    private function verifyOpenSSL($data, $signature)
-    {
-        $algo = OPENSSL_ALGO_SHA1;
-        if (! empty($this->cryptParams['digest'])) {
-            $algo = $this->cryptParams['digest'];
-        }
-        return openssl_verify($data, $signature, $this->key, $algo);
-    }
-
-    /**
      * Encrypts the given data (string) using the regarding php-extension, depending on the library assigned to algorithm in the contructor.
      *
      * @param string $data
@@ -493,12 +343,7 @@ class XMLSecurityKey
      */
     public function encryptData($data)
     {
-        switch ($this->cryptParams['library']) {
-            case 'mcrypt':
-                return $this->encryptMcrypt($data);
-            case 'openssl':
-                return $this->encryptOpenSSL($data);
-        }
+        return $this->xmlSecurityStrategy->encryptData($data);
     }
 
     /**
@@ -509,12 +354,7 @@ class XMLSecurityKey
      */
     public function decryptData($data)
     {
-        switch ($this->cryptParams['library']) {
-            case 'mcrypt':
-                return $this->decryptMcrypt($data);
-            case 'openssl':
-                return $this->decryptOpenSSL($data);
-        }
+        return $this->xmlSecurityStrategy->decryptData($data);
     }
 
     /**
@@ -527,7 +367,7 @@ class XMLSecurityKey
     {
         switch ($this->cryptParams['library']) {
             case 'openssl':
-                return $this->signOpenSSL($data);
+                return $this->xmlSecurityStrategy->signData($data);
             case (self::HMAC_SHA1):
                 return hash_hmac("sha1", $data, $this->key, true);
         }
@@ -543,7 +383,7 @@ class XMLSecurityKey
     {
         switch ($this->cryptParams['library']) {
             case 'openssl':
-                return $this->verifyOpenSSL($data, $signature);
+                return $this->xmlSecurityStrategy->verifySignature($data, $signature);
             case (self::HMAC_SHA1):
                 $expectedSignature = hash_hmac("sha1", $data, $this->key, true);
                 return strcmp($signature, $expectedSignature) == 0;
@@ -635,8 +475,6 @@ class XMLSecurityKey
     {
 
     }
-    
-
 
     /**
      * Retrieve the X509 certificate this key represents.
