@@ -82,6 +82,8 @@ foreach ($arTests AS $testName=>$testFile) {
 		if ($output == $res) {
 			print "Passed\n";
 			continue;
+		} else {
+		  var_dump($output, $res);
 		}
 	}
 	print "Failed\n";
