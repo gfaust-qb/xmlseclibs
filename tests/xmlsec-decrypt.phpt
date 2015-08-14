@@ -83,7 +83,7 @@ foreach ($arTests AS $testName=>$testFile) {
 			print "Passed\n";
 			continue;
 		} else {
-		  var_dump($output);
+
 		}
 	}
 	print "Failed\n";
