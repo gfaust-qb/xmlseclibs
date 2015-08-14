@@ -47,11 +47,12 @@ foreach ($arTests AS $testName=>$testFile) {
 				$key = $objencKey->decryptKey($objKeyInfo);
 			}
 		}
-		
-		if (! $objKey->key && empty($key)) {
+
+		$objKeyKey = $objKey->getKEy();
+		if (! $objKeyKey && empty($key)) {
 			locateLocalKey($objKey);
 		}
-		if (empty($objKey->key)) {
+		if (empty($objKeyKey)) {
 			$objKey->loadKey($key);
 		}
 		
