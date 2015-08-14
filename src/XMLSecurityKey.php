@@ -490,4 +490,12 @@ class XMLSecurityKey
     {
         $this->xmlSecurityStrategy->setEncryptedCtx($encryptedCtx);
     }
+
+    /**
+     * @return \RobRichards\XMLSecLibs\XMLSecEnc
+     */
+    public function getEncryptedCtx()
+    {
+        return $this->xmlSecurityStrategy->getEncryptedCtx();
+    }
 }
