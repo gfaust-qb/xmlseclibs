@@ -41,7 +41,8 @@ namespace RobRichards\XMLSecLibs;
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  */
 
-interface XMLSecurityStrategy {
+interface XMLSecurityStrategy
+{
 
     /**
      * @param string $data
@@ -72,4 +73,14 @@ interface XMLSecurityStrategy {
      * @return mixed
      */
     public function generateSessionKey();
+
+    /**
+     * Loads the given key, or - with isFile set true - the key from the keyfile.
+     *
+     * @param string $key
+     * @param bool $isFile
+     * @param bool $isCert
+     * @throws \Exception
+     */
+    public function loadKey($key, $isFile = false, $isCert = false);
 }

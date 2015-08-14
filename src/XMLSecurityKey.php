@@ -349,47 +349,7 @@ class XMLSecurityKey
      */
     public function loadKey($key, $isFile=false, $isCert = false)
     {
-        if ($isFile) {
-            $this->key = file_get_contents($key);
-        } else {
-            $this->key = $key;
-        }
-        if ($isCert) {
-            $this->key = openssl_x509_read($this->key);
-            openssl_x509_export($this->key, $str_cert);
-            $this->x509Certificate = $str_cert;
-            $this->key = $str_cert;
-        } else {
-            $this->x509Certificate = null;
-        }
-        if ($this->xmlSecurityParams->getLibrary() == self::PHP_EXTENSION_OPENSSL) {
-            if ($this->xmlSecurityParams->getCertificateType() == 'public') {
-                if ($isCert) {
-                    /* Load the thumbprint if this is an X509 certificate. */
-                    $this->X509Thumbprint = self::getRawThumbprint($this->key);
-                }
-                $this->key = openssl_pkey_get_public($this->key);
-                if (! $this->key) {
-                    throw new XMLSecException('Unable to extract public key');
-                }
-            } else {
-                $this->key = openssl_pkey_get_private($this->key, $this->passphrase);
-            }
-        } else if ($this->xmlSecurityParams->getCipher() == MCRYPT_RIJNDAEL_128) {
-            /* Check key length */
-            switch ($this->type) {
-                case (self::AES256_CBC):
-                    if (strlen($this->key) < 25) {
-                        throw new XMLSecException('Key must contain at least 25 characters for this cipher');
-                    }
-                    break;
-                case (self::AES192_CBC):
-                    if (strlen($this->key) < 17) {
-                        throw new XMLSecException('Key must contain at least 17 characters for this cipher');
-                    }
-                    break;
-            }
-        }
+        return $this->xmlSecurityStrategy->loadKey($key, $isFile, $isCert);
     }
 
     /**
