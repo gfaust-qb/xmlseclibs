@@ -503,4 +503,12 @@ class XMLSecurityKey
         return $this->xmlSecurityStrategy->getPassphrase();
     }
 
+    /**
+     * @return mixed
+     */
+    public function getKey()
+    {
+        return $this->xmlSecurityStrategy->getKey();
+    }
+
 }

@@ -89,4 +89,21 @@ interface XMLSecurityStrategy
      * @return mixed
      */
     public function setPassphrase($passphrase);
+
+    /**
+     * @return mixed
+     */
+    public function getPassphrase();
+
+    /**
+     * @param string|null $key
+     * @return mixed
+     */
+    public function setKey($key);
+
+    /**
+     * @return mixed
+     */
+    public function getKey();
+
 }
