@@ -96,20 +96,6 @@ class XMLSecurityStrategyMcrypt extends XMLSecurityStrategyBase implements XMLSe
     }
 
     /**
-     * @param string $data
-     * @return mixed|void
-     */
-    public function signData($data)
-    {
-
-    }
-
-    public function verifySignature($data, $signature)
-    {
-
-    }
-
-    /**
      * Generates a session key using the mcrypt-extension.
      * In case of using DES3-CBC the key is checked for a proper parity bits set - Mcrypt doesn't care about the parity bits,
      * but others may care.

@@ -171,7 +171,7 @@ class XMLSecurityStrategyBase {
                 }
             } else if ($this->xmlSecurityParams->getCipher() == MCRYPT_RIJNDAEL_128) {
                 /* Check key length */
-                switch ($this->type) {
+                switch ($this->xmlSecurityParams->getMethod()) {
                     case (XMLSecurityKey::AES256_CBC):
                         if (strlen($this->key) < 25) {
                             throw new XMLSecException('Key must contain at least 25 characters for this cipher');
@@ -245,6 +245,20 @@ class XMLSecurityStrategyBase {
     public function setX509Thumbprint($X509Thumbprint)
     {
         $this->X509Thumbprint = $X509Thumbprint;
+    }
+
+    /**
+     * @param string $data
+     * @return mixed|void
+     */
+    public function signData($data)
+    {
+
+    }
+
+    public function verifySignature($data, $signature)
+    {
+
     }
 
 }
