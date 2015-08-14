@@ -318,7 +318,7 @@ class XMLSecEnc
             $this->encKey = $encKey;
         }
         $encMethod = $encKey->appendChild($this->encdoc->createElementNS(self::XMLENCNS, 'xenc:EncryptionMethod'));
-        $encMethod->setAttribute('Algorithm', $srcKey->getAlgorith());
+        $encMethod->setAttribute('Algorithm', $srcKey->getAlgorithm());
         if (! empty($srcKey->name)) {
             $keyInfo = $encKey->appendChild($this->encdoc->createElementNS('http://www.w3.org/2000/09/xmldsig#', 'dsig:KeyInfo'));
             $keyInfo->appendChild($this->encdoc->createElementNS('http://www.w3.org/2000/09/xmldsig#', 'dsig:KeyName', $srcKey->name));
@@ -337,17 +337,18 @@ class XMLSecEnc
     }
 
     /**
-     * @param $encKey
+     * @param XMLSecurityKey $encKey
      * @return DOMElement|string
      * @throws \Exception
      */
     public function decryptKey($encKey)
     {
-        if (! $encKey->isEncrypted) {
+        if (!$encKey->getIsEncrypted()) {
             throw new XMLSecException("Key is not Encrypted");
         }
 
-        if (empty($encKey->key)) {
+        $key = $encKey->getKey();
+        if (empty($key)) {
             throw new XMLSecException("Key is missing data to perform the decryption");
         }
         return $this->decryptNode($encKey, false);

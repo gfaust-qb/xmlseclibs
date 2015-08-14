@@ -87,24 +87,17 @@ class XMLSecurityKey
      * @deprecated
      */
     public $isEncrypted = false;
-    /** @var XMLSecEnc */
+    /**
+     * @var XMLSecEnc
+     * @deprecated
+     */
     public $encryptedCtx = null;
     /** @var mixed|null */
     public $guid = null;
-    /** @var array */
-    private $cryptParams = array();
     /** @var XMLSecurityParams */
     private $xmlSecurityParams = null;
     /** @var XMLSecurityStrategy */
     private $xmlSecurityStrategy = null;
-    /**
-     * This variable contains the certificate as a string if this key represents an X509-certificate.
-     * If this key doesn't represent a certificate, this will be null.
-     */
-    private $x509Certificate = null;
-
-    /* This variable contains the certificate thumbprint if we have loaded an X509-certificate. */
-    private $X509Thumbprint = null;
 
     /**
      * @param string $type
@@ -480,6 +473,14 @@ class XMLSecurityKey
     public function setIsEncrypted($isEncrypted)
     {
         $this->xmlSecurityStrategy->setIsEncrypted($isEncrypted);
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getIsEncrypted()
+    {
+        return $this->xmlSecurityStrategy->getIsEncrypted();
     }
 
     /**
