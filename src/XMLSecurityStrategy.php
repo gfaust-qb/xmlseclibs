@@ -68,4 +68,8 @@ interface XMLSecurityStrategy {
      */
     public function verifySignature($data, $signature);
 
+    /**
+     * @return mixed
+     */
+    public function generateSessionKey();
 }

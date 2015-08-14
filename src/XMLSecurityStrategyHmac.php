@@ -61,6 +61,11 @@ class XMLSecurityStrategyHmac extends XMLSecurityStrategyBase implements XMLSecu
 
     }
 
+    public function generateSessionKey()
+    {
+
+    }
+
     /**
      * @param string $data
      * @return mixed|string
