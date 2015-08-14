@@ -54,7 +54,7 @@ class XMLSecurityStrategyFactory {
     {
         switch ($xmlSecurityParams->getLibrary()) {
             case XMLSecurityKey::PHP_EXTENSION_MCRYPT:
-                $strategy = new XMLSecurityStrategyMcrypt($xmlSecurityParams);
+                $this->strategy = new XMLSecurityStrategyMcrypt($xmlSecurityParams);
                 break;
             case XMLSecurityKey::PHP_EXTENSION_OPENSSL:
                 $this->strategy = new XMLSecurityStrategyOpenssl($xmlSecurityParams);
