@@ -82,7 +82,10 @@ class XMLSecurityKey
      * @deprecated
      */
     public $keyChain = null;
-    /** @var bool */
+    /**
+     * @var bool
+     * @deprecated
+     */
     public $isEncrypted = false;
     /** @var XMLSecEnc */
     public $encryptedCtx = null;
@@ -307,8 +310,8 @@ class XMLSecurityKey
         if (!$objKey = $objenc->locateKey()) {
             throw new XMLSecException("Unable to locate algorithm for this Encrypted Key");
         }
-        $objKey->isEncrypted = true;
-        $objKey->encryptedCtx = $objenc;
+        $objKey->setIsEncrypted(true);
+        $objKey->setEncryptedCtx($objenc);
         XMLSecEnc::staticLocateKeyInfo($objKey, $element);
         return $objKey;
     }

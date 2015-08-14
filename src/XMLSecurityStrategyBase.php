@@ -41,7 +41,8 @@ namespace RobRichards\XMLSecLibs;
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  */
 
-class XMLSecurityStrategyBase {
+class XMLSecurityStrategyBase
+{
 
     /** @var XMLSecurityParams */
     protected $xmlSecurityParams = null;
@@ -60,6 +61,12 @@ class XMLSecurityStrategyBase {
 
     /** @var string|null */
     protected $X509Thumbprint = null;
+
+    /** @var XMLSecEnc */
+    protected $encryptedCtx = null;
+
+    /** @var bool */
+    protected $isEncrypted = false;
 
     /**
      * @param XMLSecurityParams $xmlSecurityParams
@@ -259,6 +266,38 @@ class XMLSecurityStrategyBase {
     public function verifySignature($data, $signature)
     {
 
+    }
+
+    /**
+     * @param \RobRichards\XMLSecLibs\XMLSecEnc $encryptedCtx
+     */
+    public function setEncryptedCtx($encryptedCtx)
+    {
+        $this->encryptedCtx = $encryptedCtx;
+    }
+
+    /**
+     * @return \RobRichards\XMLSecLibs\XMLSecEnc
+     */
+    public function getEncryptedCtx()
+    {
+        return $this->encryptedCtx;
+    }
+
+    /**
+     * @param boolean $isEncrypted
+     */
+    public function setIsEncrypted($isEncrypted)
+    {
+        $this->isEncrypted = $isEncrypted;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getIsEncrypted()
+    {
+        return $this->isEncrypted;
     }
 
 }
