@@ -96,7 +96,7 @@ class XMLSecurityStrategyOpenssl extends XMLSecurityStrategyBase implements XMLS
     public function generateSessionKey()
     {
         if ((int)$this->xmlSecurityParams->getKeysize() <= 0) {
-            throw new XMLSecException('Unknown key size for type "' . $this->type . '".');
+            throw new XMLSecException('Unknown key size for type "' . $this->xmlSecurityParams->getMethod() . '".');
         }
         $keysize = $this->xmlSecurityParams->getKeysize();
 

@@ -319,10 +319,10 @@ class XMLSecurityKey
      */
     public function getSymmetricKeySize()
     {
-        if (! isset($this->cryptParams['keysize'])) {
+        if ($this->xmlSecurityParams->getKeysize() >= 0) {
             return null;
         }
-        return $this->cryptParams['keysize'];
+        return $this->xmlSecurityParams->getKeysize();
     }
 
     /**
