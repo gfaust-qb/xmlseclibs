@@ -40,7 +40,6 @@ foreach ($arTests AS $testName=>$testFile) {
 		$key = NULL;
 		
 		if ($objKeyInfo = $objenc->locateKeyInfo($objKey)) {
-		var_dump($objKeyInfo);
 			if ($objKeyInfo->getIsEncrypted()) {
 				$objencKey = $objKeyInfo->getEncryptedCtx();
 				locateLocalKey($objKeyInfo);
@@ -71,7 +70,7 @@ foreach ($arTests AS $testName=>$testFile) {
 			}
 		}
 	} catch (Exception $e) {
-var_dump($e);
+
 	}
 
 	$outfile = dirname(__FILE__) . "/basic-doc.xml";
