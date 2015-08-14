@@ -468,7 +468,7 @@ class XMLSecurityKey
      */
     public function getX509Certificate()
     {
-        return $this->x509Certificate;
+        return $this->xmlSecurityStrategy->getX509Certificate();
     }
 
     /**
@@ -482,7 +482,7 @@ class XMLSecurityKey
      */
     public function getX509Thumbprint()
     {
-        return $this->X509Thumbprint;
+        return $this->xmlSecurityStrategy->getX509Thumbprint();
     }
 
     /**

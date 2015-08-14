@@ -55,6 +55,12 @@ class XMLSecurityStrategyBase {
     /** @var string|null */
     protected $passphrase = null;
 
+    /** @var string|null */
+    protected $x509Certificate = null;
+
+    /** @var string|null */
+    protected $X509Thumbprint = null;
+
     /**
      * @param XMLSecurityParams $xmlSecurityParams
      */
@@ -196,6 +202,49 @@ class XMLSecurityStrategyBase {
     public function getPassphrase()
     {
         return $this->passphrase;
+    }
+
+    /**
+     * Retrieve the X509 certificate this key represents.
+     *
+     * Will return the X509 certificate in PEM-format if this key represents
+     * an X509 certificate.
+     *
+     * @return string The X509 certificate or null if this key doesn't represent an X509-certificate.
+     */
+    public function getX509Certificate()
+    {
+        return $this->x509Certificate;
+    }
+
+    /**
+     * @param null|string $x509Certificate
+     */
+    public function setX509Certificate($x509Certificate)
+    {
+        $this->x509Certificate = $x509Certificate;
+    }
+
+    /**
+     * Get the thumbprint of this X509 certificate.
+     *
+     * Returns:
+     *  The thumbprint as a lowercase 40-character hexadecimal number, or null
+     *  if this isn't a X509 certificate.
+     *
+     * @return string Lowercase 40-character hexadecimal number of thumbprint
+     */
+    public function getX509Thumbprint()
+    {
+        return $this->X509Thumbprint;
+    }
+
+    /**
+     * @param null|string $X509Thumbprint
+     */
+    public function setX509Thumbprint($X509Thumbprint)
+    {
+        $this->X509Thumbprint = $X509Thumbprint;
     }
 
 }
