@@ -108,6 +108,22 @@ class XMLSecurityStrategyBase {
         return $this->xmlSecurityParams;
     }
 
+    /**
+     * @param string $data
+     */
+    public function encryptData($data)
+    {
+
+    }
+
+    /**
+     * @param string $data
+     */
+    public function decryptData($data)
+    {
+
+    }
+
 
 
 }
