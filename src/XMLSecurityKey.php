@@ -61,6 +61,7 @@ class XMLSecurityKey
     const PHP_EXTENSION_MCRYPT = 'mcrypt';
     const PHP_EXTENSION_OPENSSL = 'openssl';
 
+    const DIGEST_SHA_1   = 'SHA1';
     const DIGEST_SHA_256 = 'SHA256';
     const DIGEST_SHA_384 = 'SHA384';
     const DIGEST_SHA_512 = 'SHA512';
@@ -218,7 +219,8 @@ class XMLSecurityKey
                 throw new XMLSecException('Certificate "type" (private/public) must be passed via parameters');
             case (self::HMAC_SHA1):
                 $this->xmlSecurityParams->setMethod($type)
-                    ->setLibrary($type);
+                    ->setLibrary($type)
+                    ->setDigest(self::DIGEST_SHA_1);
                 break;
             default:
                 throw new XMLSecException('Invalid Key Type');

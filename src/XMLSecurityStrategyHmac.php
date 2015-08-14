@@ -45,7 +45,7 @@ class XMLSecurityStrategyHmac extends XMLSecurityStrategyBase implements XMLSecu
 
     public function encryptData($data)
     {
-        return hash_hmac($algo, $data, $this->key, true);
+        return hash_hmac($this->xmlSecurityParams->getDigest(), $data, $this->key, true);
     }
 
     public function decryptData($data)
