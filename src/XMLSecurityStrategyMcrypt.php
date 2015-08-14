@@ -105,14 +105,14 @@ class XMLSecurityStrategyMcrypt extends XMLSecurityStrategyBase implements XMLSe
     public function generateSessionKey()
     {
         if ((int)$this->xmlSecurityParams->getKeysize() <= 0) {
-            throw new XMLSecException('Unknown key size for type "' . $this->type . '".');
+            throw new XMLSecException('Unknown key size for type "' . $this->xmlSecurityParams->getMethod() . '".');
         }
         $keysize = $this->xmlSecurityParams->getKeysize();
 
         /* Generating random key using iv generation routines */
         $key = mcrypt_create_iv($keysize, MCRYPT_RAND);
 
-        if ($this->type === XMLSecurityKey::TRIPLEDES_CBC) {
+        if ($this->xmlSecurityParams->getMethod() === XMLSecurityKey::TRIPLEDES_CBC) {
             /* Make sure that the generated key has the proper parity bits set.
              * Mcrypt doesn't care about the parity bits, but others may care.
             */
