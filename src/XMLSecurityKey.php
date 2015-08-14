@@ -482,4 +482,11 @@ class XMLSecurityKey
         $this->xmlSecurityStrategy->setIsEncrypted($isEncrypted);
     }
 
+    /**
+     * @param \RobRichards\XMLSecLibs\XMLSecEnc $encryptedCtx
+     */
+    public function setEncryptedCtx($encryptedCtx)
+    {
+        $this->xmlSecurityStrategy->setEncryptedCtx($encryptedCtx);
+    }
 }

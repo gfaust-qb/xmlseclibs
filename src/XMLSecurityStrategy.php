@@ -132,4 +132,9 @@ interface XMLSecurityStrategy
      */
     public function setIsEncrypted($isEncrypted);
 
+    /**
+     * @param \RobRichards\XMLSecLibs\XMLSecEnc $encryptedCtx
+     */
+    public function setEncryptedCtx($encryptedCtx);
+
 }
