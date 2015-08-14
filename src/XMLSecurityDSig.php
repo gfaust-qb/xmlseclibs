@@ -2,9 +2,9 @@
 namespace RobRichards\XMLSecLibs;
 
 use DomDocument;
-use DomElement;
-use DomNode;
 use DomXPath;
+use DomNode;
+use DomElement;
 use Exception;
 
 /**
@@ -73,7 +73,7 @@ class XMLSecurityDSig
   </SignedInfo>
 </Signature>';
 
-    /** @var \DOMElement|null  */
+    /** @var DOMElement|null */
     public $sigNode = null;
 
     /** @var array */
@@ -99,7 +99,7 @@ class XMLSecurityDSig
 
     /**
      * This variable contains an associative array of validated nodes.
-     * @var array
+     * @var array|null
      */
     private $validatedNodes = null;
 
@@ -216,7 +216,7 @@ class XMLSecurityDSig
 
     /**
      * @param string $method
-     * @throws \Exception
+     * @throws XMLSecException
      */
     public function setCanonicalMethod($method)
     {
@@ -320,7 +320,7 @@ class XMLSecurityDSig
      * @param string $data
      * @param bool $encode
      * @return string
-     * @throws \Exception
+     * @throws XMLSecException
      */
     public function calculateDigest($digestAlgorithm, $data, $encode = true)
     {
@@ -371,7 +371,7 @@ class XMLSecurityDSig
 
     /**
      * @param $refNode
-     * @param $objData
+     * @param DOMNode $objData
      * @param bool $includeCommentNodes
      * @return string
      */
@@ -460,7 +460,7 @@ class XMLSecurityDSig
     }
 
     /**
-     * @param $refNode
+     * @param DOMNode $refNode
      * @return bool
      */
     public function processRefNode($refNode)
@@ -529,7 +529,7 @@ class XMLSecurityDSig
     }
 
     /**
-     * @param $refNode
+     * @param DOMNode $refNode
      * @return null
      */
     public function getRefNodeID($refNode)
@@ -547,7 +547,7 @@ class XMLSecurityDSig
 
     /**
      * @return array
-     * @throws \Exception
+     * @throws XMLSecException
      */
     public function getRefIDs()
     {
@@ -567,7 +567,7 @@ class XMLSecurityDSig
 
     /**
      * @return bool
-     * @throws \Exception
+     * @throws XMLSecException
      */
     public function validateReference()
     {
@@ -596,7 +596,7 @@ class XMLSecurityDSig
     }
 
     /**
-     * @param $sinfoNode
+     * @param DOMNode $sinfoNode
      * @param DOMDocument $node
      * @param string $algorithm
      * @param null|array $arTransforms
@@ -680,7 +680,7 @@ class XMLSecurityDSig
     }
 
     /**
-     * @param $node
+     * @param DOMDocument $node
      * @param string $algorithm
      * @param null|array $arTransforms
      * @param null|array $options
@@ -719,7 +719,7 @@ class XMLSecurityDSig
      * @param DOMElement|string $data
      * @param null|string $mimetype
      * @param null|string $encoding
-     * @return DomElement
+     * @return DOMElement
      */
     public function addObject($data, $mimetype=null, $encoding=null)
     {
@@ -744,6 +744,9 @@ class XMLSecurityDSig
 
     /**
      * @param null|DOMNode $node
+     * @throws XMLSecException
+     * @throws Exception
+     *
      * @return null|XMLSecurityKey
      */
     public function locateKey($node=null)
@@ -776,7 +779,7 @@ class XMLSecurityDSig
     /**
      * @param XMLSecurityKey $objKey
      * @return mixed
-     * @throws \Exception
+     * @throws XMLSecException
      */
     public function verify($objKey)
     {
@@ -875,7 +878,7 @@ class XMLSecurityDSig
     /**
      * @param DOMNode $parentNode
      * @param bool $insertBefore
-     * @return DomNode
+     * @return DOMNode
      */
     public function appendSignature($parentNode, $insertBefore = false)
     {
@@ -937,7 +940,7 @@ class XMLSecurityDSig
      * @param bool $isURL
      * @param null|DOMXPath $xpath
      * @param null|array $options
-     * @throws \Exception
+     * @throws XMLSecException
      */
     public static function staticAdd509Cert($parentRef, $cert, $isPEMFormat=true, $isURL=false, $xpath=null, $options=null)
     {
