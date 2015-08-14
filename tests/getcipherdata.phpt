@@ -18,7 +18,7 @@ printf("Data CipherValue: %s\n", md5($ciphervalue));
 
 $objKey = $objenc->locateKey();
 $objKeyInfo = $objenc->locateKeyInfo($objKey);
-$encryptedKey = $objKeyInfo->encryptedCtx;
+$encryptedKey = $objKeyInfo->getEncryptedCtx();
 
 $keyCV = $encryptedKey->getCipherValue();
 printf("Key CipherValue: %s\n", md5($keyCV));
