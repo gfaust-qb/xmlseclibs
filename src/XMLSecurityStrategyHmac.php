@@ -52,5 +52,10 @@ class XMLSecurityStrategyHmac extends XMLSecurityStrategyBase implements XMLSecu
     {
 
     }
+
+    public function signData($data)
+    {
+        return hash_hmac($this->xmlSecurityParams->getDigest(), $data, $this->key, true);
+    }
 }
  
