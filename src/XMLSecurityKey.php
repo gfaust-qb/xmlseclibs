@@ -225,7 +225,8 @@ class XMLSecurityKey
         }
         $this->type = $type;
 
-        $this->xmlSecurityStrategy = new XMLSecurityStrategyFactory($this->xmlSecurityParams);
+        $xmlSecurityStrategyFactory = new XMLSecurityStrategyFactory($this->xmlSecurityParams);
+        $this->xmlSecurityStrategy  = $xmlSecurityStrategyFactory->get();
     }
 
     /**
