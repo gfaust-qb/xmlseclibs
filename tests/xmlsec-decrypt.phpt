@@ -32,7 +32,7 @@ foreach ($arTests AS $testName=>$testFile) {
 		if (! $encData) {
 			throw new Exception("Cannot locate Encrypted Data");
 		}
-		$objenc->setNode($encData);3
+		$objenc->setNode($encData);
 		$objenc->type = $encData->getAttribute("Type");
 		if (! $objKey = $objenc->locateKey()) {
 			throw new Exception("We know the secret key, but not the algorithm");
