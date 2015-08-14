@@ -40,6 +40,7 @@ foreach ($arTests AS $testName=>$testFile) {
 		$key = NULL;
 		
 		if ($objKeyInfo = $objenc->locateKeyInfo($objKey)) {
+		var_dump($objKeyInfo);
 			if ($objKeyInfo->isEncrypted) {
 				$objencKey = $objKeyInfo->encryptedCtx;
 				locateLocalKey($objKeyInfo);
@@ -69,7 +70,6 @@ foreach ($arTests AS $testName=>$testFile) {
 				$output = $decrypt;
 			}
 		}
-		var_dump($decrypt);
 	} catch (Exception $e) {
 var_dump($e);
 	}
