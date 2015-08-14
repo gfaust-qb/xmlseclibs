@@ -54,19 +54,19 @@ class XMLSecurityStrategyFactory {
     {
         switch ($xmlSecurityParams->getLibrary()) {
             case XMLSecurityKey::PHP_EXTENSION_MCRYPT:
-                $this->strategy = new XMLSecurityStrategyMcrypt($xmlSecurityParams);
+                $strategy = new XMLSecurityStrategyMcrypt($xmlSecurityParams);
                 break;
             case XMLSecurityKey::PHP_EXTENSION_OPENSSL:
-                $this->strategy = new XMLSecurityStrategyOpenssl($xmlSecurityParams);
+                $strategy = new XMLSecurityStrategyOpenssl($xmlSecurityParams);
                 break;
             case XMLSecurityKey::HMAC_SHA1:
-                $this->strategy = new XMLSecurityStrategyHmac($xmlSecurityParams);
+                $strategy = new XMLSecurityStrategyHmac($xmlSecurityParams);
                 break;
             default:
                 throw new XMLSecException('Unsupported strategy: ' . print_r($xmlSecurityParams->getLibrary(), true));
         }
 
-        return $this->strategy;
+        return $strategy;
     }
 
 }
