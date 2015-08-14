@@ -360,8 +360,8 @@ class XMLSecurityKey
         } else {
             $this->x509Certificate = null;
         }
-        if ($this->cryptParams['library'] == self::PHP_EXTENSION_OPENSSL) {
-            if ($this->cryptParams['type'] == 'public') {
+        if ($this->xmlSecurityParams->getLibrary() == self::PHP_EXTENSION_OPENSSL) {
+            if ($this->xmlSecurityParams->getCertificateType() == 'public') {
                 if ($isCert) {
                     /* Load the thumbprint if this is an X509 certificate. */
                     $this->X509Thumbprint = self::getRawThumbprint($this->key);
@@ -373,7 +373,7 @@ class XMLSecurityKey
             } else {
                 $this->key = openssl_pkey_get_private($this->key, $this->passphrase);
             }
-        } else if ($this->cryptParams['cipher'] == MCRYPT_RIJNDAEL_128) {
+        } else if ($this->xmlSecurityParams->getCipher() == MCRYPT_RIJNDAEL_128) {
             /* Check key length */
             switch ($this->type) {
                 case (self::AES256_CBC):
