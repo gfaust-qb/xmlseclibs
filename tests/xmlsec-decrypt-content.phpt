@@ -48,7 +48,7 @@ foreach ($arTests AS $testName=>$testFile) {
 			}
 		}
 
-		$objKeyKey = $objKey->getKEy();
+		$objKeyKey = $objKey->getKey();
 		if (! $objKeyKey && empty($key)) {
 			locateLocalKey($objKey);
 		}
