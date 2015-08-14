@@ -52,6 +52,9 @@ class XMLSecurityStrategyBase {
     /** @var string */
     protected $iv = '';
 
+    /** @var string|null */
+    protected $passphrase = null;
+
     /**
      * @param XMLSecurityParams $xmlSecurityParams
      */
@@ -158,7 +161,7 @@ class XMLSecurityStrategyBase {
                         throw new XMLSecException('Unable to extract public key');
                     }
                 } else {
-                    $this->key = openssl_pkey_get_private($this->key, $this->passphrase);
+                    $this->key = openssl_pkey_get_private($this->key, $this->getPassphrase());
                 }
             } else if ($this->xmlSecurityParams->getCipher() == MCRYPT_RIJNDAEL_128) {
                 /* Check key length */
@@ -176,6 +179,24 @@ class XMLSecurityStrategyBase {
                 }
             }
         }
+
+    /**
+     * Set passphrase to null if it is unset.
+     * @param null|string $passphrase
+     */
+    public function setPassphrase($passphrase)
+    {
+        $this->passphrase = $passphrase;
+    }
+
+    /**
+     * Returns null for an unset passphrase.
+     * @return null|string
+     */
+    public function getPassphrase()
+    {
+        return $this->passphrase;
+    }
 
 }
  

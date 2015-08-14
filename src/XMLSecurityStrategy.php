@@ -83,4 +83,10 @@ interface XMLSecurityStrategy
      * @throws \Exception
      */
     public function loadKey($key, $isFile = false, $isCert = false);
+
+    /**
+     * @param string $passphrase
+     * @return mixed
+     */
+    public function setPassphrase($passphrase);
 }
