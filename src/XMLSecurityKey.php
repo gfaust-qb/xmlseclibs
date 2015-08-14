@@ -46,18 +46,18 @@ use Exception;
 
 class XMLSecurityKey
 {
-    const TRIPLEDES_CBC = 'http://www.w3.org/2001/04/xmlenc#tripledes-cbc';
-    const AES128_CBC = 'http://www.w3.org/2001/04/xmlenc#aes128-cbc';
-    const AES192_CBC = 'http://www.w3.org/2001/04/xmlenc#aes192-cbc';
-    const AES256_CBC = 'http://www.w3.org/2001/04/xmlenc#aes256-cbc';
-    const RSA_1_5 = 'http://www.w3.org/2001/04/xmlenc#rsa-1_5';
-    const RSA_OAEP_MGF1P = 'http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p';
-    const DSA_SHA1 = 'http://www.w3.org/2000/09/xmldsig#dsa-sha1';
-    const RSA_SHA1 = 'http://www.w3.org/2000/09/xmldsig#rsa-sha1';
-    const RSA_SHA256 = 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256';
-    const RSA_SHA384 = 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha384';
-    const RSA_SHA512 = 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha512';
-    const HMAC_SHA1 = 'http://www.w3.org/2000/09/xmldsig#hmac-sha1';
+    const TRIPLEDES_CBC        = 'http://www.w3.org/2001/04/xmlenc#tripledes-cbc';
+    const AES128_CBC           = 'http://www.w3.org/2001/04/xmlenc#aes128-cbc';
+    const AES192_CBC           = 'http://www.w3.org/2001/04/xmlenc#aes192-cbc';
+    const AES256_CBC           = 'http://www.w3.org/2001/04/xmlenc#aes256-cbc';
+    const RSA_1_5              = 'http://www.w3.org/2001/04/xmlenc#rsa-1_5';
+    const RSA_OAEP_MGF1P       = 'http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p';
+    const DSA_SHA1             = 'http://www.w3.org/2000/09/xmldsig#dsa-sha1';
+    const RSA_SHA1             = 'http://www.w3.org/2000/09/xmldsig#rsa-sha1';
+    const RSA_SHA256           = 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256';
+    const RSA_SHA384           = 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha384';
+    const RSA_SHA512           = 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha512';
+    const HMAC_SHA1            = 'http://www.w3.org/2000/09/xmldsig#hmac-sha1';
     const PHP_EXTENSION_MCRYPT = 'mcrypt';
     const PHP_EXTENSION_OPENSSL = 'openssl';
 
@@ -70,10 +70,10 @@ class XMLSecurityKey
     /** @var mixed|null */
     public $key = null;
     /** @var string
-     *  @deprecated
+     * @deprecated
      */
     public $passphrase = "";
-    /** @var string  */
+    /** @var string */
     public $iv = null;
     /** @var string */
     public $name = null;
@@ -110,48 +110,25 @@ class XMLSecurityKey
      * @param string $type
      * @param null|array $params
      */
-    public function __construct($type, $params=null)
+    public function __construct($type, $params = null)
     {
         $this->xmlSecurityParams = new XMLSecurityParams();
         switch ($type) {
             case (self::TRIPLEDES_CBC):
-                $this->xmlSecurityParams
-                    ->setMethod($type)
-                    ->setLibrary(self::PHP_EXTENSION_MCRYPT)
-                    ->setCipher(MCRYPT_TRIPLEDES)
-                    ->setMode(MCRYPT_MODE_CBC)
-                    ->setKeysize(24);
+                $this->xmlSecurityParams->setMethod($type)->setLibrary(self::PHP_EXTENSION_MCRYPT)->setCipher(MCRYPT_TRIPLEDES)->setMode(MCRYPT_MODE_CBC)->setKeysize(24);
                 break;
             case (self::AES128_CBC):
-                $this->xmlSecurityParams
-                    ->setMethod($type)
-                    ->setLibrary(self::PHP_EXTENSION_MCRYPT)
-                    ->setCipher(MCRYPT_RIJNDAEL_128)
-                    ->setMode(MCRYPT_MODE_CBC)
-                    ->setKeysize(16);
+                $this->xmlSecurityParams->setMethod($type)->setLibrary(self::PHP_EXTENSION_MCRYPT)->setCipher(MCRYPT_RIJNDAEL_128)->setMode(MCRYPT_MODE_CBC)->setKeysize(16);
                 break;
             case (self::AES192_CBC):
-                $this->xmlSecurityParams
-                    ->setMethod($type)
-                    ->setLibrary(self::PHP_EXTENSION_MCRYPT)
-                    ->setCipher(MCRYPT_RIJNDAEL_128)
-                    ->setMode(MCRYPT_MODE_CBC)
-                    ->setKeysize(24);
+                $this->xmlSecurityParams->setMethod($type)->setLibrary(self::PHP_EXTENSION_MCRYPT)->setCipher(MCRYPT_RIJNDAEL_128)->setMode(MCRYPT_MODE_CBC)->setKeysize(24);
                 break;
             case (self::AES256_CBC):
-                $this->xmlSecurityParams
-                    ->setMethod($type)
-                    ->setLibrary(self::PHP_EXTENSION_MCRYPT)
-                    ->setCipher(MCRYPT_RIJNDAEL_128)
-                    ->setMode(MCRYPT_MODE_CBC)
-                    ->setKeysize(32);
+                $this->xmlSecurityParams->setMethod($type)->setLibrary(self::PHP_EXTENSION_MCRYPT)->setCipher(MCRYPT_RIJNDAEL_128)->setMode(MCRYPT_MODE_CBC)->setKeysize(32);
                 break;
             case (self::RSA_1_5):
-                $this->xmlSecurityParams
-                    ->setMethod($type)
-                    ->setLibrary(self::PHP_EXTENSION_OPENSSL)
-                    ->setPadding(OPENSSL_PKCS1_PADDING);
-                if (is_array($params) && ! empty($params['type'])) {
+                $this->xmlSecurityParams->setMethod($type)->setLibrary(self::PHP_EXTENSION_OPENSSL)->setPadding(OPENSSL_PKCS1_PADDING);
+                if (is_array($params) && !empty($params['type'])) {
                     if ($params['type'] == 'public' || $params['type'] == 'private') {
                         $this->xmlSecurityParams->setCertificateType($params['type']);
                         break;
@@ -159,12 +136,8 @@ class XMLSecurityKey
                 }
                 throw new XMLSecException('Certificate "type" (private/public) must be passed via parameters');
             case (self::RSA_OAEP_MGF1P):
-                $this->xmlSecurityParams
-                    ->setMethod($type)
-                    ->setLibrary(self::PHP_EXTENSION_OPENSSL)
-                    ->setPadding(OPENSSL_PKCS1_OAEP_PADDING)
-                    ->setHash(null);
-                if (is_array($params) && ! empty($params['type'])) {
+                $this->xmlSecurityParams->setMethod($type)->setLibrary(self::PHP_EXTENSION_OPENSSL)->setPadding(OPENSSL_PKCS1_OAEP_PADDING)->setHash(null);
+                if (is_array($params) && !empty($params['type'])) {
                     if ($params['type'] == 'public' || $params['type'] == 'private') {
                         $this->xmlSecurityParams->setCertificateType($params['type']);
                         break;
@@ -172,11 +145,8 @@ class XMLSecurityKey
                 }
                 throw new XMLSecException('Certificate "type" (private/public) must be passed via parameters');
             case (self::RSA_SHA1):
-                $this->xmlSecurityParams
-                    ->setMethod($type)
-                    ->setLibrary(self::PHP_EXTENSION_OPENSSL)
-                    ->setPadding(OPENSSL_PKCS1_PADDING);
-                if (is_array($params) && ! empty($params['type'])) {
+                $this->xmlSecurityParams->setMethod($type)->setLibrary(self::PHP_EXTENSION_OPENSSL)->setPadding(OPENSSL_PKCS1_PADDING);
+                if (is_array($params) && !empty($params['type'])) {
                     if ($params['type'] == 'public' || $params['type'] == 'private') {
                         $this->xmlSecurityParams->setCertificateType($params['type']);
                         break;
@@ -184,12 +154,8 @@ class XMLSecurityKey
                 }
                 throw new XMLSecException('Certificate "type" (private/public) must be passed via parameters');
             case (self::RSA_SHA256):
-                $this->xmlSecurityParams
-                    ->setMethod($type)
-                    ->setLibrary(self::PHP_EXTENSION_OPENSSL)
-                    ->setPadding(OPENSSL_PKCS1_PADDING)
-                    ->setDigest(self::DIGEST_SHA_256);
-                if (is_array($params) && ! empty($params['type'])) {
+                $this->xmlSecurityParams->setMethod($type)->setLibrary(self::PHP_EXTENSION_OPENSSL)->setPadding(OPENSSL_PKCS1_PADDING)->setDigest(self::DIGEST_SHA_256);
+                if (is_array($params) && !empty($params['type'])) {
                     if ($params['type'] == 'public' || $params['type'] == 'private') {
                         $this->xmlSecurityParams->setCertificateType($params['type']);
                         break;
@@ -197,12 +163,8 @@ class XMLSecurityKey
                 }
                 throw new XMLSecException('Certificate "type" (private/public) must be passed via parameters');
             case (self::RSA_SHA384):
-                $this->xmlSecurityParams
-                    ->setMethod($type)
-                    ->setLibrary(self::PHP_EXTENSION_OPENSSL)
-                    ->setPadding(OPENSSL_PKCS1_PADDING)
-                    ->setDigest(self::DIGEST_SHA_256);
-                if (is_array($params) && ! empty($params['type'])) {
+                $this->xmlSecurityParams->setMethod($type)->setLibrary(self::PHP_EXTENSION_OPENSSL)->setPadding(OPENSSL_PKCS1_PADDING)->setDigest(self::DIGEST_SHA_256);
+                if (is_array($params) && !empty($params['type'])) {
                     if ($params['type'] == 'public' || $params['type'] == 'private') {
                         $this->xmlSecurityParams->setCertificateType($params['type']);
                         break;
@@ -210,12 +172,8 @@ class XMLSecurityKey
                 }
                 throw new XMLSecException('Certificate "type" (private/public) must be passed via parameters');
             case (self::RSA_SHA512):
-                $this->xmlSecurityParams
-                    ->setMethod($type)
-                    ->setLibrary(self::PHP_EXTENSION_OPENSSL)
-                    ->setPadding(OPENSSL_PKCS1_PADDING)
-                    ->setDigest(self::DIGEST_SHA_512);
-                if (is_array($params) && ! empty($params['type'])) {
+                $this->xmlSecurityParams->setMethod($type)->setLibrary(self::PHP_EXTENSION_OPENSSL)->setPadding(OPENSSL_PKCS1_PADDING)->setDigest(self::DIGEST_SHA_512);
+                if (is_array($params) && !empty($params['type'])) {
                     if ($params['type'] == 'public' || $params['type'] == 'private') {
                         $this->xmlSecurityParams->setCertificateType($params['type']);
                         break;
@@ -223,9 +181,7 @@ class XMLSecurityKey
                 }
                 throw new XMLSecException('Certificate "type" (private/public) must be passed via parameters');
             case (self::HMAC_SHA1):
-                $this->xmlSecurityParams->setMethod($type)
-                    ->setLibrary($type)
-                    ->setDigest(self::DIGEST_SHA_1);
+                $this->xmlSecurityParams->setMethod($type)->setLibrary($type)->setDigest(self::DIGEST_SHA_1);
                 break;
             default:
                 throw new XMLSecException('Invalid Key Type');
@@ -245,21 +201,22 @@ class XMLSecurityKey
     public static function convertRSA($modulus, $exponent)
     {
         /* make an ASN publicKeyInfo */
-        $exponentEncoding = self::makeAsnSegment(0x02, $exponent);
-        $modulusEncoding = self::makeAsnSegment(0x02, $modulus);
-        $sequenceEncoding = self::makeAsnSegment(0x30, $modulusEncoding . $exponentEncoding);
+        $exponentEncoding  = self::makeAsnSegment(0x02, $exponent);
+        $modulusEncoding   = self::makeAsnSegment(0x02, $modulus);
+        $sequenceEncoding  = self::makeAsnSegment(0x30, $modulusEncoding . $exponentEncoding);
         $bitstringEncoding = self::makeAsnSegment(0x03, $sequenceEncoding);
         $rsaAlgorithmIdentifier = pack("H*", "300D06092A864886F70D0101010500");
-        $publicKeyInfo = self::makeAsnSegment(0x30, $rsaAlgorithmIdentifier . $bitstringEncoding);
+        $publicKeyInfo     = self::makeAsnSegment(0x30, $rsaAlgorithmIdentifier . $bitstringEncoding);
 
         /* encode the publicKeyInfo in base64 and add PEM brackets */
         $publicKeyInfoBase64 = base64_encode($publicKeyInfo);
-        $encoding = "-----BEGIN PUBLIC KEY-----\n";
-        $offset = 0;
+        $encoding          = "-----BEGIN PUBLIC KEY-----\n";
+        $offset            = 0;
         while ($segment = substr($publicKeyInfoBase64, $offset, 64)) {
             $encoding = $encoding . $segment . "\n";
             $offset += 64;
         }
+
         return $encoding . "-----END PUBLIC KEY-----\n";
     }
 
@@ -292,6 +249,7 @@ class XMLSecurityKey
         } else {
             $output = null;
         }
+
         return $output;
     }
 
@@ -313,6 +271,7 @@ class XMLSecurityKey
         $objKey->setIsEncrypted(true);
         $objKey->setEncryptedCtx($objenc);
         XMLSecEnc::staticLocateKeyInfo($objKey, $element);
+
         return $objKey;
     }
 
@@ -329,6 +288,7 @@ class XMLSecurityKey
         if ($this->xmlSecurityParams->getKeysize() <= 0) {
             return null;
         }
+
         return $this->xmlSecurityParams->getKeysize();
     }
 
@@ -352,7 +312,7 @@ class XMLSecurityKey
      * @param bool $isCert
      * @throws \Exception
      */
-    public function loadKey($key, $isFile=false, $isCert = false)
+    public function loadKey($key, $isFile = false, $isCert = false)
     {
         return $this->xmlSecurityStrategy->loadKey($key, $isFile, $isCert);
     }
@@ -367,7 +327,7 @@ class XMLSecurityKey
     {
 
         $arCert = explode("\n", $cert);
-        $data = '';
+        $data                  = '';
         $inData = false;
 
         foreach ($arCert AS $curData) {
@@ -512,6 +472,14 @@ class XMLSecurityKey
     public function getKey()
     {
         return $this->xmlSecurityStrategy->getKey();
+    }
+
+    /**
+     * @param boolean $isEncrypted
+     */
+    public function setIsEncrypted($isEncrypted)
+    {
+        $this->xmlSecurityStrategy->setIsEncrypted($isEncrypted);
     }
 
 }
