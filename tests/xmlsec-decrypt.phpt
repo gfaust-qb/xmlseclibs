@@ -69,6 +69,7 @@ foreach ($arTests AS $testName=>$testFile) {
 				$output = $decrypt;
 			}
 		}
+		var_dump($decrypt);
 	} catch (Exception $e) {
 
 	}
@@ -83,7 +84,7 @@ foreach ($arTests AS $testName=>$testFile) {
 			print "Passed\n";
 			continue;
 		} else {
-		  var_dump($decrypt,$output);
+		  var_dump($output);
 		}
 	}
 	print "Failed\n";
