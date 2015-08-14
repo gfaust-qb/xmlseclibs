@@ -41,7 +41,7 @@ namespace RobRichards\XMLSecLibs;
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  */
 
-class XMLSecurityStrategyFactory implements XMLSecurityStrategy {
+class XMLSecurityStrategyFactory {
 
     /** @var XMLSecurityStrategyBase */
     private $strategy = null;
