@@ -346,6 +346,7 @@ class XMLSecEnc
         if (! $encKey->isEncrypted) {
             throw new XMLSecException("Key is not Encrypted");
         }
+
         if (empty($encKey->key)) {
             throw new XMLSecException("Key is missing data to perform the decryption");
         }

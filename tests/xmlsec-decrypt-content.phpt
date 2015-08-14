@@ -41,6 +41,7 @@ foreach ($arTests AS $testName=>$testFile) {
 		$key = NULL;
 		
 		if ($objKeyInfo = $objenc->locateKeyInfo($objKey)) {
+		var_dump($objKexInfo);
 			if ($objKeyInfo->isEncrypted) {
 				$objencKey = $objKeyInfo->encryptedCtx;
 				locateLocalKey($objKeyInfo);
