@@ -19,7 +19,7 @@ $objKey = $objenc->locateKey();
 
 $objKeyInfo = $objenc->locateKeyInfo($objKey);
 
-if (!$objKeyInfo->isEncrypted) {
+if (!$objKeyInfo->getIsEncrypted()) {
 	throw new Exception('Expected $objKeyInfo to refer to an encrypted key by now.');
 }
 
