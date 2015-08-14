@@ -455,12 +455,7 @@ class XMLSecurityKey
      */
     public function signData($data)
     {
-        switch ($this->xmlSecurityParams->getLibrary()) {
-            case self::PHP_EXTENSION_OPENSSL:
-                return $this->xmlSecurityStrategy->signData($data);
-            case (self::HMAC_SHA1):
-                return hash_hmac("sha1", $data, $this->key, true);
-        }
+        return $this->xmlSecurityStrategy->signData($data);
     }
 
     /**
@@ -471,13 +466,7 @@ class XMLSecurityKey
      */
     public function verifySignature($data, $signature)
     {
-        switch ($this->xmlSecurityParams->getLibrary()) {
-            case self::PHP_EXTENSION_OPENSSL:
-                return $this->xmlSecurityStrategy->verifySignature($data, $signature);
-            case (self::HMAC_SHA1):
-                $expectedSignature = hash_hmac("sha1", $data, $this->key, true);
-                return strcmp($signature, $expectedSignature) == 0;
-        }
+        return $this->xmlSecurityStrategy->verifySignature($data, $signature);
     }
 
     /**

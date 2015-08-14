@@ -55,4 +55,17 @@ interface XMLSecurityStrategy {
      */
     public function decryptData($data);
 
+    /**
+     * @param string $data
+     * @return mixed
+     */
+    public function signData($data);
+
+    /**
+     * @param string $data
+     * @param string $signature
+     * @return mixed
+     */
+    public function verifySignature($data, $signature);
+
 }

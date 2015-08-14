@@ -43,19 +43,43 @@ namespace RobRichards\XMLSecLibs;
 
 class XMLSecurityStrategyHmac extends XMLSecurityStrategyBase implements XMLSecurityStrategy{
 
+    /**
+     * @param string $data
+     * @return mixed|string|void
+     */
     public function encryptData($data)
     {
         return hash_hmac($this->xmlSecurityParams->getDigest(), $data, $this->key, true);
     }
 
+    /**
+     * @param string $data
+     * @return mixed|void
+     */
     public function decryptData($data)
     {
 
     }
 
+    /**
+     * @param string $data
+     * @return mixed|string
+     */
     public function signData($data)
     {
         return hash_hmac($this->xmlSecurityParams->getDigest(), $data, $this->key, true);
+    }
+
+    /**
+     * Verifies the data (string) against the given signature using the extension assigned to the type in the constructor.
+     * @param string $data
+     * @param string $signature
+     * @return bool|int
+     */
+    public function verifySignature($data, $signature)
+    {
+        $expectedSignature = hash_hmac($this->xmlSecurityParams->getDigest(), $data, $this->key, true);
+        return strcmp($signature, $expectedSignature) == 0;
     }
 }
  
