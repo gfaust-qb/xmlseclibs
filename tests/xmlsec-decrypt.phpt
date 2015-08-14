@@ -71,7 +71,7 @@ foreach ($arTests AS $testName=>$testFile) {
 		}
 		var_dump($decrypt);
 	} catch (Exception $e) {
-
+var_dump($e);
 	}
 
 	$outfile = dirname(__FILE__) . "/basic-doc.xml";
