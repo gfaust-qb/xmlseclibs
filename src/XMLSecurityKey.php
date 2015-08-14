@@ -69,7 +69,9 @@ class XMLSecurityKey
     public $type = 0;
     /** @var mixed|null */
     public $key = null;
-    /** @var string  */
+    /** @var string
+     *  @deprecated
+     */
     public $passphrase = "";
     /** @var string  */
     public $iv = null;
@@ -481,6 +483,24 @@ class XMLSecurityKey
     public function getX509Thumbprint()
     {
         return $this->X509Thumbprint;
+    }
+
+    /**
+     * Set the passphrase for a key - null if passphrase is not set.
+     * @param string|null $passphrase
+     * @return mixed
+     */
+    public function setPassphrase($passphrase)
+    {
+        return $this->xmlSecurityStrategy->setPassphrase($passphrase);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPassphrase()
+    {
+        return $this->xmlSecurityStrategy->getPassphrase();
     }
 
 }
