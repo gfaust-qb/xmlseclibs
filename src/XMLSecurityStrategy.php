@@ -127,4 +127,9 @@ interface XMLSecurityStrategy
      */
     public function getX509Certificate();
 
+    /**
+     * @param boolean $isEncrypted
+     */
+    public function setIsEncrypted($isEncrypted);
+
 }
