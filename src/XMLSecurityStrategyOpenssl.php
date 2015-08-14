@@ -53,12 +53,12 @@ class XMLSecurityStrategyOpenssl extends XMLSecurityStrategyBase implements XMLS
      */
     public function encryptData($data)
     {
-        if ($this->xmlSecurityParams->type == 'public') {
-            if (!openssl_public_encrypt($data, $encrypted_data, $this->key, $this->xmlSecurityParams->padding)) {
+        if ($this->xmlSecurityParams->getCertificateType() == 'public') {
+            if (!openssl_public_encrypt($data, $encrypted_data, $this->key, $this->xmlSecurityParams->getPadding())) {
                 throw new XMLSecException('Failure encrypting Data');
             }
         } else {
-            if (!openssl_private_encrypt($data, $encrypted_data, $this->key, $this->xmlSecurityParams->padding)) {
+            if (!openssl_private_encrypt($data, $encrypted_data, $this->key, $this->xmlSecurityParams->getPadding())) {
                 throw new XMLSecException('Failure encrypting Data');
             }
         }
@@ -75,12 +75,12 @@ class XMLSecurityStrategyOpenssl extends XMLSecurityStrategyBase implements XMLS
      */
     public function decryptData($data)
     {
-        if ($this->xmlSecurityParams->type == 'public') {
-            if (!openssl_public_decrypt($data, $decrypted, $this->key, $this->xmlSecurityParams->padding)) {
+        if ($this->xmlSecurityParams->getCertificateType() == 'public') {
+            if (!openssl_public_decrypt($data, $decrypted, $this->key, $this->xmlSecurityParams->getPadding())) {
                 throw new XMLSecException('Failure decrypting Data');
             }
         } else {
-            if (!openssl_private_decrypt($data, $decrypted, $this->key, $this->xmlSecurityParams->padding)) {
+            if (!openssl_private_decrypt($data, $decrypted, $this->key, $this->xmlSecurityParams->getPadding())) {
                 throw new XMLSecException('Failure decrypting Data');
             }
         }
@@ -95,10 +95,10 @@ class XMLSecurityStrategyOpenssl extends XMLSecurityStrategyBase implements XMLS
      */
     public function generateSessionKey()
     {
-        if (!isset($this->xmlSecurityParams->keysize)) {
+        if ((int)$this->xmlSecurityParams->getKeysize() <= 0) {
             throw new XMLSecException('Unknown key size for type "' . $this->type . '".');
         }
-        $keysize = $this->xmlSecurityParams->keysize;
+        $keysize = $this->xmlSecurityParams->getKeysize();
 
         $key = openssl_random_pseudo_bytes($keysize);
 
@@ -116,9 +116,10 @@ class XMLSecurityStrategyOpenssl extends XMLSecurityStrategyBase implements XMLS
          */
         public function signData($data)
         {
-            $algo = OPENSSL_ALGO_SHA1;
-            if (! empty($this->xmlSecurityParams->digest)) {
-                $algo = $this->xmlSecurityParams->digest;
+            $algo   = OPENSSL_ALGO_SHA1;
+            $digest = $this->xmlSecurityParams->getDigest();
+            if (! empty($digest)) {
+                $algo = $digest;
             }
             if (! openssl_sign($data, $signature, $this->key, $algo)) {
                 throw new XMLSecException('Failure Signing Data: ' . openssl_error_string() . ' - ' . $algo);
@@ -136,9 +137,10 @@ class XMLSecurityStrategyOpenssl extends XMLSecurityStrategyBase implements XMLS
          */
         public function verifySignature($data, $signature)
         {
-            $algo = OPENSSL_ALGO_SHA1;
-            if (! empty($this->xmlSecurityParams->digest)) {
-                $algo = $this->xmlSecurityParams->digest;
+            $algo   = OPENSSL_ALGO_SHA1;
+            $digest = $this->xmlSecurityParams->getDigest();
+            if (! empty($digest)) {
+                $algo = $digest;
             }
             return openssl_verify($data, $signature, $this->key, $algo);
         }

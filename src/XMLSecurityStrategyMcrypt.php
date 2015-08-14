@@ -52,10 +52,10 @@ class XMLSecurityStrategyMcrypt extends XMLSecurityStrategyBase implements XMLSe
      */
     public function encryptData($data)
     {
-        $td       = mcrypt_module_open($this->xmlSecurityParams->cipher, '', $this->xmlSecurityParams->mode, '');
+        $td       = mcrypt_module_open($this->xmlSecurityParams->getCipher(), '', $this->xmlSecurityParams->getMode(), '');
         $this->iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
         mcrypt_generic_init($td, $this->key, $this->iv);
-        if ($this->xmlSecurityParams->mode == MCRYPT_MODE_CBC) {
+        if ($this->xmlSecurityParams->getMode() == MCRYPT_MODE_CBC) {
             $bs = mcrypt_enc_get_block_size($td);
             for ($datalen0 = $datalen = strlen($data); (($datalen % $bs) != ($bs - 1)); $datalen++)
                 $data .= chr(mt_rand(1, 127));
@@ -76,7 +76,7 @@ class XMLSecurityStrategyMcrypt extends XMLSecurityStrategyBase implements XMLSe
      */
     public function decryptData($data)
     {
-        $td        = mcrypt_module_open($this->xmlSecurityParams->cipher, '', $this->xmlSecurityParams->mode, '');
+        $td        = mcrypt_module_open($this->xmlSecurityParams->getCipher(), '', $this->xmlSecurityParams->getMode(), '');
         $iv_length = mcrypt_enc_get_iv_size($td);
 
         $this->iv = substr($data, 0, $iv_length);
@@ -86,7 +86,7 @@ class XMLSecurityStrategyMcrypt extends XMLSecurityStrategyBase implements XMLSe
         $decrypted_data = mdecrypt_generic($td, $data);
         mcrypt_generic_deinit($td);
         mcrypt_module_close($td);
-        if ($this->xmlSecurityParams->mode == MCRYPT_MODE_CBC) {
+        if ($this->xmlSecurityParams->getMode() == MCRYPT_MODE_CBC) {
             $dataLen        = strlen($decrypted_data);
             $paddingLength  = substr($decrypted_data, $dataLen - 1, 1);
             $decrypted_data = substr($decrypted_data, 0, $dataLen - ord($paddingLength));
@@ -104,10 +104,10 @@ class XMLSecurityStrategyMcrypt extends XMLSecurityStrategyBase implements XMLSe
      */
     public function generateSessionKey()
     {
-        if (!isset($this->xmlSecurityParams->keysize)) {
+        if ((int)$this->xmlSecurityParams->getKeysize() <= 0) {
             throw new XMLSecException('Unknown key size for type "' . $this->type . '".');
         }
-        $keysize = $this->xmlSecurityParams->keysize;
+        $keysize = $this->xmlSecurityParams->getKeysize();
 
         /* Generating random key using iv generation routines */
         $key = mcrypt_create_iv($keysize, MCRYPT_RAND);
