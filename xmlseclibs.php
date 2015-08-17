@@ -1,4 +1,5 @@
 <?php
+namespace RobRichards\XMLSecLibs;
 /**
  * xmlseclibs.php
  *
