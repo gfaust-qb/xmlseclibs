@@ -50,7 +50,7 @@ spl_autoload_register('AutoLoader');
 
 function AutoLoader($className)
 {
-    $file = str_replace('\\',DIRECTORY_SEPARATOR,$className);
+    $file = str_replace(array(__NAMESPACE__, '\\'),DIRECTORY_SEPARATOR,$className);
     $filename = __DIR__ . '/src/' . $file .".php";
     require_once($filename);
 }
