@@ -41,12 +41,9 @@
  * @version   2.1.0-dev
  */
 
-//$xmlseclibs_srcdir = __DIR__ . '/src/';
-//require $xmlseclibs_srcdir . 'XMLSecurityException.php';
-//require $xmlseclibs_srcdir . '/XMLSecurityKey.php';
-//require $xmlseclibs_srcdir . '/XMLSecurityDSig.php';
-//require $xmlseclibs_srcdir . '/XMLSecEnc.php';
-
+/**
+ * @param string $className
+ */
 function XMLSecLibs_AutoLoader($className)
 {
     $namespace = 'RobRichards\XMLSecLibs';
