@@ -47,11 +47,11 @@ namespace RobRichards\XMLSecLibs;
 #require $xmlseclibs_srcdir . '/XMLSecurityDSig.php';
 #require $xmlseclibs_srcdir . '/XMLSecEnc.php';
 
-function AutoLoader($className)
+function qb_AutoLoader($className)
 {
     $file = str_replace(array(__NAMESPACE__, '\\'),DIRECTORY_SEPARATOR,$className);
     $filename = __DIR__ . '/src/' . $file .".php";
     require_once($filename);
 }
 
-spl_autoload_register('AutoLoader');
+spl_autoload_register('qb_AutoLoader');
