@@ -4,7 +4,7 @@ namespace RobRichards\XMLSecLibs;
 
 use PHPUnit_Framework_TestCase;
 
-require_once '../xmlseclibs.php';
+require_once '../src/xmlseclibs.php';
 
 
 class XMLSecEncTest extends PHPUnit_Framework_TestCase
