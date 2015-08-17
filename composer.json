@@ -15,7 +15,8 @@
     }
   },
   "require": {
-    "php": ">= 5.3"
+    "php": ">= 5.3",
+    "phpunit/phpunit": "4.8.4"
    },
   "suggest": {
     "ext/openssl": "OpenSSL extension",
