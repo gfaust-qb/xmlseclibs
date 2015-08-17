@@ -47,8 +47,6 @@ namespace RobRichards\XMLSecLibs;
 #require $xmlseclibs_srcdir . '/XMLSecurityDSig.php';
 #require $xmlseclibs_srcdir . '/XMLSecEnc.php';
 
-spl_autoload_register('AutoLoader');
-
 function AutoLoader($className)
 {
     $file = str_replace(array(__NAMESPACE__, '\\'),DIRECTORY_SEPARATOR,$className);
@@ -56,3 +54,4 @@ function AutoLoader($className)
     require_once($filename);
 }
 
+spl_autoload_register('AutoLoader');
