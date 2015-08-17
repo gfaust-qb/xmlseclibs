@@ -1,4 +1,7 @@
 <?php
+namespace RobRichards\XMLSecLibs;
+
+use Exception;
 
 /**
  * xmlseclibs.php
@@ -38,18 +41,8 @@
  * @author    Robert Richards <rrichards@cdatazone.org>
  * @copyright 2007-2015 Robert Richards <rrichards@cdatazone.org>
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version   2.1.0-dev
  */
 
-/**
- * @param string $className
- */
-function XMLSecLibs_AutoLoader($className)
+class XMLSecurityException extends Exception
 {
-    $namespace = 'RobRichards\XMLSecLibs';
-    $file = str_replace(array($namespace, '\\'),DIRECTORY_SEPARATOR,$className);
-    $filename = __DIR__ . '/src/' . $file .".php";
-    require_once($filename);
 }
-
-spl_autoload_register('XMLSecLibs_AutoLoader');
