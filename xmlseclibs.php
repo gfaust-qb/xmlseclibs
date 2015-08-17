@@ -1,5 +1,5 @@
 <?php
-namespace RobRichards\XMLSecLibs;
+//namespace RobRichards\XMLSecLibs;
 /**
  * xmlseclibs.php
  *
@@ -49,6 +49,7 @@ namespace RobRichards\XMLSecLibs;
 
 function qb_loader($className)
 {
+    echo __NAMESPACE__;
     $file = str_replace(array(__NAMESPACE__, '\\'),DIRECTORY_SEPARATOR,$className);
     $filename = __DIR__ . '/src/' . $file .".php";
     require_once($filename);
