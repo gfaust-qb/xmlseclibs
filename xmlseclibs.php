@@ -46,8 +46,12 @@
 #require $xmlseclibs_srcdir . '/XMLSecurityDSig.php';
 #require $xmlseclibs_srcdir . '/XMLSecEnc.php';
 
-function __autoload($classname) {
-    $filename = __DIR__ . '/src/' . $classname .".php";
+spl_autoload_register('AutoLoader');
+
+function AutoLoader($className)
+{
+    $file = str_replace('\\',DIRECTORY_SEPARATOR,$className);
+    $filename = __DIR__ . '/src/' . $file .".php";
     require_once($filename);
 }
 
