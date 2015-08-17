@@ -1,5 +1,5 @@
 <?php
-//namespace RobRichards\XMLSecLibs;
+
 /**
  * xmlseclibs.php
  *
@@ -47,12 +47,12 @@
 #require $xmlseclibs_srcdir . '/XMLSecurityDSig.php';
 #require $xmlseclibs_srcdir . '/XMLSecEnc.php';
 
-function qb_loader($className)
+function XMLSecLibs_AutoLoader($className)
 {
-    echo __NAMESPACE__;
-    $file = str_replace(array(__NAMESPACE__, '\\'),DIRECTORY_SEPARATOR,$className);
+    $namespace = 'RobRichards\XMLSecLibs';
+    $file = str_replace(array($namespace, '\\'),DIRECTORY_SEPARATOR,$className);
     $filename = __DIR__ . '/src/' . $file .".php";
     require_once($filename);
 }
 
-spl_autoload_register('qb_loader');
+spl_autoload_register('XMLSecLibs_AutoLoader');
