@@ -1,6 +1,8 @@
 xmlseclibs.php
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 17, August 2015, 2.1.0
+Features:
+- Added Autoloader.
 Improvements:
 - Added specified Exception.
 
