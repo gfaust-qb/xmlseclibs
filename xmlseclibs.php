@@ -47,7 +47,7 @@
 #require $xmlseclibs_srcdir . '/XMLSecEnc.php';
 
 function __autoload($classname) {
-    $filename = "./" . __DIR__ . '/src/' . $classname .".php";
+    $filename = __DIR__ . '/src/' . $classname .".php";
     require_once($filename);
 }
 
