@@ -1,5 +1,4 @@
 <?php
-
 namespace RobRichards\XMLSecLibs;
 
 use PHPUnit_Framework_TestCase;
