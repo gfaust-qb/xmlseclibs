@@ -47,9 +47,11 @@
 function XMLSecLibs_AutoLoader($className)
 {
     $namespace = 'RobRichards\XMLSecLibs';
-    $file = str_replace(array($namespace, '\\'),DIRECTORY_SEPARATOR,$className);
-    $filename = __DIR__ . '/src/' . $file .".php";
-    require_once($filename);
+    if (strpos($namespace, $className) === 0) {
+        $file = str_replace(array($namespace, '\\'),DIRECTORY_SEPARATOR,$className);
+        $filename = __DIR__ . '/src/' . $file .".php";
+        require_once($filename);
+    }
 }
 
 spl_autoload_register('XMLSecLibs_AutoLoader');
