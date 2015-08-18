@@ -11,6 +11,8 @@ class EncrypteddataNodeOrderTest extends PHPUnit_Framework_TestCase {
 
     public function testBasicDoc() {
 
+        echo __DIR__;
+
             $dom = new DOMDocument();
             $dom->load(__DIR__ . '/basic-doc.xml');
 

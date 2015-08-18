@@ -11,7 +11,6 @@ class XMLSecEncTest extends PHPUnit_Framework_TestCase
 {
     public function testSetNode()
     {
-        echo __DIR__;
         $xmlSecEnc = new XMLSecEnc();
         $domNodeGiven = new \DOMNode();
         $domNodeExpected = $domNodeGiven;
