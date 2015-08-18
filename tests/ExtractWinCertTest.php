@@ -5,7 +5,7 @@ namespace RobRichards\XMLSecLibs;
 use DOMDocument;
 use Exception;
 
-require(dirname(__FILE__) . '/../xmlseclibs.php');
+require_once(dirname(__FILE__) . '/../xmlseclibs.php');
 
 /**
  * Extract Public Key
