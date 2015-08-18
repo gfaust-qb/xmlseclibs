@@ -47,7 +47,7 @@
 function XMLSecLibs_AutoLoader($className)
 {
     $namespace = 'RobRichards\XMLSecLibs';
-    if (strpos($namespace, $className) === 0) {
+    if (strpos('PHPUnit', $className) !== false) {
         $file = str_replace(array($namespace, '\\'),DIRECTORY_SEPARATOR,$className);
         $filename = __DIR__ . '/src/' . $file .".php";
         require_once($filename);
