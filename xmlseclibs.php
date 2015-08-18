@@ -50,6 +50,7 @@ function XMLSecLibs_AutoLoader($className)
     if (strpos('PHPUnit', $className) !== false && strpos($namespace, $className) === 0) {
         $file = str_replace(array($namespace, '\\'),DIRECTORY_SEPARATOR,$className);
         $filename = __DIR__ . '/src/' . $file .".php";
+        echo $filename . PHP_EOL;
         require_once($filename);
     }
 }
