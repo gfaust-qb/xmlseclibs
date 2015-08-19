@@ -35,8 +35,8 @@ class XmlsecEncryptTest extends PHPUnit_Framework_TestCase {
         $enc->type = XMLSecEnc::Element;
         $encNode = $enc->encryptNode($objKey);
 
-        $this->assertFileExists(__DIR__ . '/oaep_sha1.xml', "__DIR__/oaep_sha1.xml");
         $dom->save(__DIR__ . '/oaep_sha1.xml');
+        $this->assertFileExists(__DIR__ . '/oaep_sha1.xml', "__DIR__/oaep_sha1.xml");
 
         $root = $dom->documentElement;
 
