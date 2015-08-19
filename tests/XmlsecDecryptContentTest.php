@@ -67,7 +67,7 @@ class XmlsecDecryptContentTest extends PHPUnit_Framework_TestCase {
 try{
                 $decrypt = $objenc->decryptNode($objKey, TRUE);
 } catch(\DOMException $e) {
-echo $e->getMessage();
+$msg .= $e->getMessage();
 }
                 $this->assertNotEmpty($decrypt, 'Decrypt');
 
