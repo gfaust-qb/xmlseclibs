@@ -13,7 +13,7 @@ class XmlSignTest extends \PHPUnit_Framework_TestCase {
      */
     public function test()
     {
-
+        $this->markTestSkipped('must be revisited.');
         if (file_exists(__DIR__ . '/sign-basic-test.xml')) {
             unlink(__DIR__ . '/sign-basic-test.xml');
         }
