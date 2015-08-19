@@ -26,14 +26,14 @@ class XmlsecDecryptContentTest extends PHPUnit_Framework_TestCase {
 
             $this->assertFileExists(__DIR__ . "/$testFile");
             $doc->load(__DIR__ . "/$testFile");
-/*
+
             $error = false;
             $msg   = '';
             try {
                 $objenc = new XMLSecEnc();
                 $encData = $objenc->locateEncryptedData($doc);
 
-                $this->assertNotNull($encData, "Encrypted Data");
+/*                $this->assertNotNull($encData, "Encrypted Data");
 
                 $objenc->setNode($encData);
                 $objenc->type = $encData->getAttribute("Type");
@@ -75,13 +75,13 @@ class XmlsecDecryptContentTest extends PHPUnit_Framework_TestCase {
                         $output = $decrypt;
                     }
                 }
-            } catch (Exception $e) {
+  */          } catch (Exception $e) {
                 $error = true;
                 $msg = $e->getMessage();
             }
 
             $this->assertFalse($error, 'Exception: ' . $msg);
-
+/*
             $outfile = __DIR__ . "/basic-doc.xml";
             $res = NULL;
 
