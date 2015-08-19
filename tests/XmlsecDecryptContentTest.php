@@ -23,21 +23,22 @@ class XmlsecDecryptContentTest extends PHPUnit_Framework_TestCase {
 
         foreach ($arTests AS $testName=>$testFile) {
             $output = NULL;
-            print "$testName: ";
 
+            $this->assertFileExists(__DIR__ . "/$testFile");
             $doc->load(__DIR__ . "/$testFile");
 
             try {
                 $objenc = new XMLSecEnc();
                 $encData = $objenc->locateEncryptedData($doc);
-                if (! $encData) {
-                    throw new Exception("Cannot locate Encrypted Data");
-                }
+
+                $this->assertNotNull($encData, "Encrypted Data");
+
                 $objenc->setNode($encData);
                 $objenc->type = $encData->getAttribute("Type");
-                if (! $objKey = $objenc->locateKey()) {
-                    throw new Exception("We know the secret key, but not the algorithm");
-                }
+                $objKey = $objenc->locateKey();
+
+                $this->assertNotNull($objKey, 'Key and algorithm.' );
+
                 $key = NULL;
                 $objKeyInfo = $objenc->locateKeyInfo($objKey);
 
@@ -94,10 +95,6 @@ class XmlsecDecryptContentTest extends PHPUnit_Framework_TestCase {
             }
 
         }
-
-        #--EXPECTF--
-        #AOESP_SHA1: Passed
-        #AOESP_SHA1_CONTENT: Passed
 
     }
 
