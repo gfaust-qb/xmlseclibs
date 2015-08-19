@@ -77,10 +77,10 @@ class XmlsecDecryptContentTest extends PHPUnit_Framework_TestCase {
    */             }
             } catch (Exception $e) {
                 $error = true;
-                $msg = $e->getMessage();
+                //$msg = $e->getMessage();
             }
 
-            $this->assertFalse($error, 'Exception: ' . $msg);
+            $this->assertFalse($error, 'Exception');
 /*
             $outfile = __DIR__ . "/basic-doc.xml";
             $res = NULL;
