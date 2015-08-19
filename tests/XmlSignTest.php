@@ -18,6 +18,8 @@ class XmlSignTest extends \PHPUnit_Framework_TestCase {
             unlink(__DIR__ . '/sign-basic-test.xml');
         }
 
+        $this->assertFileExists(__DIR__ . '/basic-doc.xml', __DIR__ . '/basic-doc.xml');
+
         $doc = new DOMDocument();
         $doc->load(__DIR__ . '/basic-doc.xml');
 
