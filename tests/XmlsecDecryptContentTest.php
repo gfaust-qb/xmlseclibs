@@ -71,7 +71,7 @@ class XmlsecDecryptContentTest extends PHPUnit_Framework_TestCase {
 
                 if ($decrypt) {
                     $output = NULL;
-                    if ($decrypt instanceof DOMNode) {
+                /*    if ($decrypt instanceof DOMNode) {
                         if ($decrypt instanceof DOMDocument) {
                             $output = $decrypt->saveXML();
                         } else {
@@ -80,7 +80,7 @@ class XmlsecDecryptContentTest extends PHPUnit_Framework_TestCase {
                     } else {
                         $output = $decrypt;
                     }
-                }
+            */    }
             } catch (Exception $e) {
                 $error = true;
                 $msg .= $e->getMessage();
