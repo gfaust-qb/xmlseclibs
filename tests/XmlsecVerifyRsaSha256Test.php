@@ -13,7 +13,7 @@ class XmlsecVerifyRsaSha256Test extends PHPUnit_Framework_TestCase {
      */
     public function test()
     {
-        $this->markTestSkipped('must be revisited.');
+        //$this->markTestSkipped('must be revisited.');
         $doc = new DOMDocument();
         $arTests = array('SIGN_TEST_RSA_SHA256'=>'sign-sha256-rsa-sha256-test.xml');
 

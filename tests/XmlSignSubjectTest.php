@@ -13,7 +13,7 @@ class XmlSignSubjectTest extends PHPUnit_Framework_TestCase {
      */
     public function test()
     {
-        $this->markTestSkipped('must be revisited.');
+        //$this->markTestSkipped('must be revisited.');
         $generatedFile = __DIR__ . '/sign-subject.xml';
         $expectedFile  = __DIR__ . '/sign-subject.res';
 

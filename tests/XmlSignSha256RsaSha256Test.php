@@ -13,7 +13,7 @@ class XmlSignSha256RsaSha256Test extends PHPUnit_Framework_TestCase {
      */
     public function test()
     {
-        $this->markTestSkipped('must be revisited.');
+        //$this->markTestSkipped('must be revisited.');
         if (file_exists(__DIR__ . '/sign-sha256-rsa-sha256-test.xml')) {
             unlink(__DIR__ . '/sign-sha256-rsa-sha256-test.xml');
         }
