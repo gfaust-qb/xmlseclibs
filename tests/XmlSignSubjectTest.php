@@ -45,7 +45,7 @@ class XmlSignSubjectTest extends PHPUnit_Framework_TestCase {
         $doc->save($generatedFile);
 
         $this->assertXmlFileEqualsXmlFile($expectedFile, $generatedFile, 'Signed Output');
-        unlink($generatedFile);
+        //unlink($generatedFile);
     }
 }
  

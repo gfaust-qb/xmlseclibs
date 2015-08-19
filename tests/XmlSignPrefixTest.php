@@ -42,7 +42,7 @@ class XmlSignPrefixTest extends PHPUnit_Framework_TestCase {
             $doc->save(__DIR__ . $sig_out);
 
             $this->assertXmlFileEqualsXmlFile(__DIR__ . "/xml-sign-prefix-$file_out.res", __DIR__ . $sig_out, 'Signed Output');
-            unlink(__DIR__ . $sig_out);
+            //unlink(__DIR__ . $sig_out);
         }
     }
 }
