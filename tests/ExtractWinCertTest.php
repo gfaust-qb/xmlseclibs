@@ -5,7 +5,7 @@ namespace RobRichards\XMLSecLibs;
 use DOMDocument;
 use Exception;
 
-require_once(dirname(__FILE__) . '/../xmlseclibs.php');
+require_once(__DIR__ . '/../xmlseclibs.php');
 
 /**
  * Extract Public Key
@@ -21,7 +21,7 @@ class ExtractWinCertTest extends \PHPUnit_Framework_TestCase {
         );
 
         foreach ($arTests AS $testName=>$testFile) {
-            $doc->load(dirname(__FILE__) . "/$testFile");
+            $doc->load(__DIR__ . "/$testFile");
             $objXMLSecDSig = new XMLSecurityDSig();
 
             $objDSig = $objXMLSecDSig->locateSignature($doc);
@@ -46,7 +46,7 @@ class ExtractWinCertTest extends \PHPUnit_Framework_TestCase {
 
             $objKey = $objXMLSecDSig->locateKey();
             if ($testName == 'SIGN_TEST') {
-                $objKey->loadKey(dirname(__FILE__) . '/mycert.pem', TRUE);
+                $objKey->loadKey(__DIR__ . '/mycert.pem', TRUE);
                 if ($objXMLSecDSig->verify($objKey)) {
                     $success = true;
                     $msg = "Signature validated!";
@@ -58,7 +58,7 @@ class ExtractWinCertTest extends \PHPUnit_Framework_TestCase {
             }
             if ($testName == 'ERROR_TEST') {
                 try {
-                    $objKey->loadKey(dirname(__FILE__) . '/mycert.win.pem', TRUE);
+                    $objKey->loadKey(__DIR__ . '/mycert.win.pem', TRUE);
                     $success = true;
                     $msg = "PASS";
                 } catch (Exception $e) {

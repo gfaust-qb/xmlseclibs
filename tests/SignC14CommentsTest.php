@@ -45,15 +45,7 @@ class SignC14CommentsTest extends PHPUnit_Framework_TestCase
 
         $doc->save(__DIR__ . '/sign-c14-comments.xml');
 
-        $sign_output = file_get_contents(__DIR__ . '/sign-c14-comments.xml');
-        $sign_output_def = file_get_contents(__DIR__ . '/sign-c14-comments.res');
-        // We have to convert Lineendings and Encoding to be able to use an Assertion.
-        $sign_output_def = utf8_encode(str_replace(array("\r\n", "\r"), "\n", $sign_output_def));
-        $this->assertSame($sign_output_def, $sign_output, 'Sign Output');
-        if ($sign_output != $sign_output_def) {
-            echo "NOT THE SAME\n";
-        }
-        echo "DONE\n";
+        $this->assertXmlFileEqualsXmlFile(__DIR__ . '/sign-c14-comments.res', __DIR__ . '/sign-c14-comments.xml', 'XML-File equals');
 
     }
 }

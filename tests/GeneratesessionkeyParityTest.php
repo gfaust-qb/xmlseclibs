@@ -3,7 +3,7 @@ namespace RobRichards\XMLSecLibs;
 
 use PHPUnit_Framework_TestCase;
 
-require_once(dirname(__FILE__) . '/../xmlseclibs.php');
+require_once(__DIR__ . '/../xmlseclibs.php');
 
 class GeneratesessionkeyParityTest extends PHPUnit_Framework_TestCase {
 

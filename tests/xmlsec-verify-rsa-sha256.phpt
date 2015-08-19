@@ -4,7 +4,7 @@ Verify RSA SHA256
 <?php if (version_compare(PHP_VERSION, '5.3.0', '<')) die('SKIP Requires PHP version 5.3.0 or newer.'); ?>
 --FILE--
 <?php
-require(dirname(__FILE__) . '/../xmlseclibs.php');
+require(__DIR__ . '/../xmlseclibs.php');
 use RobRichards\XMLSecLibs\XMLSecurityDSig;
 use RobRichards\XMLSecLibs\XMLSecEnc;
 
@@ -12,7 +12,7 @@ $doc = new DOMDocument();
 $arTests = array('SIGN_TEST_RSA_SHA256'=>'sign-sha256-rsa-sha256-test.xml');
 
 foreach ($arTests AS $testName=>$testFile) {
-	$doc->load(dirname(__FILE__) . "/$testFile");
+	$doc->load(__DIR__ . "/$testFile");
 	$objXMLSecDSig = new XMLSecurityDSig();
 	
 	$objDSig = $objXMLSecDSig->locateSignature($doc);
@@ -38,7 +38,7 @@ foreach ($arTests AS $testName=>$testFile) {
 	$objKeyInfo = XMLSecEnc::staticLocateKeyInfo($objKey, $objDSig);
 
 	if (! $objKeyInfo->key && empty($key)) {
-		$objKey->loadKey(dirname(__FILE__) . '/mycert.pem', TRUE);
+		$objKey->loadKey(__DIR__ . '/mycert.pem', TRUE);
 	}
 
 	print $testName.": ";
