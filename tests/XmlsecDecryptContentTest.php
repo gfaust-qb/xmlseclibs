@@ -53,7 +53,7 @@ class XmlsecDecryptContentTest extends PHPUnit_Framework_TestCase {
                         $key = $objencKey->decryptKey($objKeyInfo);
                     }
                 }
-/*
+/**/
                 if (! $objKey->key && empty($key)) {
                     $this->locateLocalKey($objKey);
                 }
@@ -63,7 +63,7 @@ class XmlsecDecryptContentTest extends PHPUnit_Framework_TestCase {
 
                 $token = NULL;
 
-                if ($decrypt = $objenc->decryptNode($objKey, TRUE)) {
+/*                if ($decrypt = $objenc->decryptNode($objKey, TRUE)) {
                     $output = NULL;
                     if ($decrypt instanceof DOMNode) {
                         if ($decrypt instanceof DOMDocument) {
