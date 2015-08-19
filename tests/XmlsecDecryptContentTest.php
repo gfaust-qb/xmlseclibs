@@ -15,7 +15,7 @@ class XmlsecDecryptContentTest extends PHPUnit_Framework_TestCase {
      */
     public function test()
     {
-        //$this->markTestSkipped('must be revisited.');
+        $this->markTestSkipped('must be revisited.');
         $arTests = array('AOESP_SHA1'=>'oaep_sha1-res.xml',
            'AOESP_SHA1_CONTENT'=>'oaep_sha1-content-res.xml');
 
