@@ -40,12 +40,12 @@ class XmlsecDecryptContentTest extends PHPUnit_Framework_TestCase {
                 $objKey = $objenc->locateKey();
 
                 $this->assertNotNull($objKey, 'Key and algorithm.' );
-/*
+
                 $key = NULL;
                 $objKeyInfo = $objenc->locateKeyInfo($objKey);
 
                 $this->assertNotNull($objKeyInfo, '$objKeyInfo');
-
+/*
                 if ($objKeyInfo) {
                     if ($objKeyInfo->isEncrypted) {
                         $objencKey = $objKeyInfo->encryptedCtx;
