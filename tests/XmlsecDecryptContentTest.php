@@ -62,12 +62,13 @@ class XmlsecDecryptContentTest extends PHPUnit_Framework_TestCase {
                 }
 
                 $token = NULL;
-                $this->assertInstanceOf('XMLSecurityKey', $objKey, 'XMLsecurityKey');
-                try {
+
+                $this->assertInstanceOf('RobRichards\XMLSecLibs\XMLSecurityKey', $objKey, 'XMLsecurityKey');
+
                 $decrypt = $objenc->decryptNode($objKey, TRUE);
-                } catch(Exception $e) {
-echo $e->getMessage() . PHP_EOL;
-                }
+
+                $this->assertNotEmpty($decrypt, 'Decrypt');
+
                 if ($decrypt) {
                     $output = NULL;
                     if ($decrypt instanceof DOMNode) {
@@ -82,10 +83,10 @@ echo $e->getMessage() . PHP_EOL;
                 }
             } catch (Exception $e) {
                 $error = true;
-                //$msg = $e->getMessage();
+                $msg .= $e->getMessage();
             }
 
-            $this->assertFalse($error, 'Exception');
+            $this->assertFalse($error, 'Exception' . $msg);
 /*
             $outfile = __DIR__ . "/basic-doc.xml";
             $res = NULL;
