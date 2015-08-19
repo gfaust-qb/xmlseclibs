@@ -42,7 +42,7 @@ class XmlSignSha256RsaSha256Test extends PHPUnit_Framework_TestCase {
         $doc->save(__DIR__ . '/sign-sha256-rsa-sha256-test.xml');
 
         $this->assertXmlFileEqualsXmlFile(__DIR__ . '/sign-sha256-rsa-sha256-test.res', __DIR__ . '/sign-sha256-rsa-sha256-test.xml', 'Signed Output');
-        unlink(__DIR__ . '/sign-sha256-rsa-sha256-test.xml');
+
     }
 }
  
