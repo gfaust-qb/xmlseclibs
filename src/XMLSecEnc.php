@@ -239,7 +239,8 @@ class XMLSecEnc
                 return null;
         }
 
-        return base64_decode($node->nodeValue);
+        $nodeValueEnc = base64_decode($node->nodeValue);
+        return $nodeValueEnc;
     }
 
     /**

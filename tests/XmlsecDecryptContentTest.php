@@ -65,17 +65,14 @@ class XmlsecDecryptContentTest extends PHPUnit_Framework_TestCase {
                 $token = NULL;
 
                 $this->assertInstanceOf('RobRichards\XMLSecLibs\XMLSecurityKey', $objKey, 'XMLsecurityKey');
-try{
-      //          $decrypt = $objenc->decryptNode($objKey, TRUE);
-    $decrypt = 'a';
-} catch(DOMException $e) {
-$msg .= $e->getMessage();
-}
+
+                $decrypt = $objenc->decryptNode($objKey, TRUE);
+
                 $this->assertNotEmpty($decrypt, 'Decrypt');
 
                 if ($decrypt) {
                     $output = NULL;
-                /*    if ($decrypt instanceof DOMNode) {
+                    if ($decrypt instanceof DOMNode) {
                         if ($decrypt instanceof DOMDocument) {
                             $output = $decrypt->saveXML();
                         } else {
@@ -84,35 +81,36 @@ $msg .= $e->getMessage();
                     } else {
                         $output = $decrypt;
                     }
-            */    }
+                }
+            } catch (DOMException $e) {
+                $error = true;
+                $msg .= $e->getMessage();
             } catch (Exception $e) {
                 $error = true;
                 $msg .= $e->getMessage();
             }
 
             $this->assertFalse($error, 'Exception' . $msg);
-/*
+
             $outfile = __DIR__ . "/basic-doc.xml";
             $res = NULL;
 
             $this->assertFileExists($outfile, $outfile);
 
             try {
-            if (file_exists($outfile)) {
-                $resDoc = new DOMDocument();
-                $resDoc->load($outfile);
-                $res = $resDoc->saveXML();
+                if (file_exists($outfile)) {
+                    $resDoc = new DOMDocument();
+                    $resDoc->load($outfile);
+                    $res = $resDoc->saveXML();
 
-                $this->assertEquals($res, $output, 'Same.');
-
-                if ($output == $res) {
-                    continue;
+                    $this->assertEquals($res, $output, 'Same.');
                 }
-            }
+            } catch(DOMException $e) {
+                $this->assertFalse(false, $e->getMessage());
             } catch(Exception $e) {
                 $this->assertFalse(false, $e->getMessage());
             }
-*/
+
         }
 
     }
