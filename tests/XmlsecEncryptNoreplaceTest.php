@@ -13,6 +13,8 @@ class XmlsecEncryptNoreplaceTest extends PHPUnit_Framework_TestCase {
      */
     public function test()
     {
+        $this->assertFileExists(__DIR__ . '/basic-doc.xml', "__DIR__/basic-doc.xml");
+
         $dom = new DOMDocument();
         $dom->load(__DIR__ . '/basic-doc.xml');
 
@@ -20,6 +22,8 @@ class XmlsecEncryptNoreplaceTest extends PHPUnit_Framework_TestCase {
 
         $objKey = new XMLSecurityKey(XMLSecurityKey::AES256_CBC);
         $objKey->generateSessionKey();
+
+        $this->assertFileExists(__DIR__ . '/mycert.pem', "__DIR__/mycert.pem");
 
         $siteKey = new XMLSecurityKey(XMLSecurityKey::RSA_OAEP_MGF1P, array('type'=>'public'));
         $siteKey->loadKey(__DIR__ . '/mycert.pem', TRUE, TRUE);
@@ -42,8 +46,6 @@ class XmlsecEncryptNoreplaceTest extends PHPUnit_Framework_TestCase {
         }
 
         $this->assertFalse($error, 'Node');
-
-        #--EXPECTF--
 
     }
 }

@@ -18,6 +18,8 @@ class XmlsecVerifyTest extends PHPUnit_Framework_TestCase {
         $arTests = array('SIGN_TEST'=>'sign-basic-test.xml');
 
         foreach ($arTests AS $testName=>$testFile) {
+
+            $this->assertFileExists(__DIR__ . "/$testFile", "__DIR__/$testFile");
             $doc->load(__DIR__ . "/$testFile");
             $objXMLSecDSig = new XMLSecurityDSig();
 
@@ -42,15 +44,15 @@ class XmlsecVerifyTest extends PHPUnit_Framework_TestCase {
             $objKeyInfo = XMLSecEnc::staticLocateKeyInfo($objKey, $objDSig);
 
             if (! $objKeyInfo->key && empty($key)) {
+
+                $this->assertFileExists(__DIR__ . '/mycert.pem', "__DIR__/mycert.pem");
+
                 $objKey->loadKey(__DIR__ . '/mycert.pem', TRUE);
             }
 
             $this->assertEquals(1, $objXMLSecDSig->verify($objKey), $testName . ': ' . 'Validate Signature.');
 
         }
-        #--EXPECTF--
-        #SIGN_TEST: Signature validated!
-
     }
 }
  

@@ -18,6 +18,8 @@ class XmlsecVerifyRsaSha256Test extends PHPUnit_Framework_TestCase {
         $arTests = array('SIGN_TEST_RSA_SHA256'=>'sign-sha256-rsa-sha256-test.xml');
 
         foreach ($arTests AS $testName=>$testFile) {
+
+            $this->assertFileExists(__DIR__ . "/$testFile", "__DIR__/$testFile");
             $doc->load(__DIR__ . "/$testFile");
             $objXMLSecDSig = new XMLSecurityDSig();
 
@@ -42,13 +44,14 @@ class XmlsecVerifyRsaSha256Test extends PHPUnit_Framework_TestCase {
             $objKeyInfo = XMLSecEnc::staticLocateKeyInfo($objKey, $objDSig);
 
             if (! $objKeyInfo->key && empty($key)) {
+
+                $this->assertFileExists(__DIR__ . '/mycert.pem', "__DIR__/mycert.pem");
+
                 $objKey->loadKey(__DIR__ . '/mycert.pem', TRUE);
             }
 
             $this->assertEquals(1, $objXMLSecDSig->verify($objKey), 'Verify Signature.');
         }
-        #--EXPECTF--
-        #SIGN_TEST_RSA_SHA256: Signature validated!
 
     }
 }
