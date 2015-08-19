@@ -92,7 +92,7 @@ class XmlsecDecryptContentTest extends PHPUnit_Framework_TestCase {
                 $resDoc->load($outfile);
                 $res = $resDoc->saveXML();
 
-                $this->assertEquals($res, $output);
+                $this->assertEquals($res, $output, 'Same.');
 
                 if ($output == $res) {
                     continue;

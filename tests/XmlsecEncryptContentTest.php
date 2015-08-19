@@ -13,7 +13,7 @@ class XmlsecEncryptContentTest extends PHPUnit_Framework_TestCase {
      */
     public function test()
     {
-        $this->markTestSkipped('must be revisited.');
+        //$this->markTestSkipped('must be revisited.');
         if (file_exists(__DIR__ . '/oaep_sha1.xml')) {
             unlink(__DIR__ . '/oaep_sha1.xml');
         }
