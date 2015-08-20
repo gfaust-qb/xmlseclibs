@@ -10,6 +10,7 @@ require_once(__DIR__ . '/../xmlseclibs.php');
 class GetcipherdataTest extends PHPUnit_Framework_TestCase {
 
     /**
+     * @group hhvm
      * Test the getCipherData() function.
      */
     public function test()

@@ -13,6 +13,7 @@ class RetrievealmethodFindkeyTest extends PHPUnit_Framework_TestCase
     /**
      * Test for ds:RetrievalMethod.
      *
+     * @group hhvm
      * @throws Exception
      */
     public function test()

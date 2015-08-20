@@ -10,6 +10,8 @@ class XmlSignTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * Basic Signature
+     *
+     * @group hhvm
      */
     public function test()
     {

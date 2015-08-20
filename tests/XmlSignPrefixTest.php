@@ -10,6 +10,8 @@ class XmlSignPrefixTest extends PHPUnit_Framework_TestCase {
 
     /**
      * Basic Signature with no namespace prefix
+     *
+     * @group hhvm
      */
     public function test()
     {

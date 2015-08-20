@@ -13,6 +13,9 @@ require_once(__DIR__ . '/../xmlseclibs.php');
 
 class ExtractWinCertTest extends \PHPUnit_Framework_TestCase {
 
+    /**
+     * @group hhvm
+     */
     public function testExtractWinCert() {
         $doc = new DOMDocument();
         $arTests = array(

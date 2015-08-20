@@ -8,7 +8,7 @@ require_once(__DIR__ . '/../xmlseclibs.php');
 class GeneratesessionkeyParityTest extends PHPUnit_Framework_TestCase {
 
     /**
-     *
+     * @group hhvm
      * Check that generated triple-des keys have the correct parity.
      */
     public function test()

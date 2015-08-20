@@ -10,6 +10,8 @@ class XmlsecVerifyTest extends PHPUnit_Framework_TestCase {
 
     /**
      * Basic Verify
+     *
+     * @group hhvm
      */
     public function test()
     {

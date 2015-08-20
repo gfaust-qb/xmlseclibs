@@ -12,6 +12,8 @@ class XmlsecDecryptTest extends PHPUnit_Framework_TestCase {
 
     /**
      * Basic Decryption
+     *
+     * @group hhvm
      */
     public function test()
     {

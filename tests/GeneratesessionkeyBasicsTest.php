@@ -16,7 +16,9 @@ require_once __DIR__ . '/../xmlseclibs.php';
  */
 class GeneratesessionkeyBasicsTest extends PHPUnit_Framework_TestCase {
 
-
+    /**
+     * @group hhvm
+     */
     public function test()
     {
         $key = new XMLSecurityKey(XMLSecurityKey::TRIPLEDES_CBC);

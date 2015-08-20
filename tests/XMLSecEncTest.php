@@ -9,6 +9,10 @@ require_once __DIR__ . '/../xmlseclibs.php';
 
 class XMLSecEncTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     *
+     * @group hhvm
+     */
     public function testSetNode()
     {
         $xmlSecEnc = new XMLSecEnc();

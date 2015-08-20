@@ -11,6 +11,8 @@ class SignEmptyUriTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Signature Forcing Empty URI
+     *
+     * @group hhvm
      */
     public function test()
     {

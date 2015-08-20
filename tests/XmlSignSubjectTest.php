@@ -10,6 +10,8 @@ class XmlSignSubjectTest extends PHPUnit_Framework_TestCase {
 
     /**
      * Basic Signature With Subject
+     *
+     * @group hhvm
      */
     public function test()
     {

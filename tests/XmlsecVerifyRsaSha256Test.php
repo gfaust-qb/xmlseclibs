@@ -10,6 +10,8 @@ class XmlsecVerifyRsaSha256Test extends PHPUnit_Framework_TestCase {
 
     /**
      * Verify RSA SHA256
+     *
+     * @group hhvm
      */
     public function test()
     {

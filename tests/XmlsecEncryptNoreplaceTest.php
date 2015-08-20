@@ -10,6 +10,8 @@ class XmlsecEncryptNoreplaceTest extends PHPUnit_Framework_TestCase {
 
     /**
      * Encryption without modifying original data
+     *
+     * @group hhvm
      */
     public function test()
     {

@@ -10,6 +10,8 @@ class SignC14CommentsTest extends PHPUnit_Framework_TestCase
 {
     /**
      * C14N_COMMENTS signatures.
+     *
+     * @group hhvm
      * @description Test signing with C14N with comments.
      * @throws XMLSecurityException
      */

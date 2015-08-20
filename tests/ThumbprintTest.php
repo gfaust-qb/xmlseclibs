@@ -9,6 +9,8 @@ class ThumbprintTest extends PHPUnit_Framework_TestCase {
 
     /**
      * Certificate thumbprint check
+     *
+     * @group hhvm
      */
     public function test()
     {

@@ -10,6 +10,8 @@ class XmlSignSha256RsaSha256Test extends PHPUnit_Framework_TestCase {
 
     /**
      * Signature RSA SHA256
+     *
+     * @group hhvm
      */
     public function test()
     {

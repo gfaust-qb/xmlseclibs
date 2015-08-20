@@ -10,7 +10,9 @@ class WithcommentEmptyUriTest extends PHPUnit_Framework_TestCase {
 
     /**
      * WithComments with an ID reference.
+     *
      * @description Checks that comments are removed when using an ID URI in a Reference.
+     * @group hhvm
      */
     public function test()
     {

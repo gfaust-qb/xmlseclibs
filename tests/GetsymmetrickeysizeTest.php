@@ -9,6 +9,7 @@ require_once(__DIR__ . '/../xmlseclibs.php');
 class GetsymmetrickeysizeTest extends PHPUnit_Framework_TestCase {
 
     /**
+     * @group hhvm
      * Test getSymmetricKeySize().
      */
     public function test()

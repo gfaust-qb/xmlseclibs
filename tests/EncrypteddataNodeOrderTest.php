@@ -9,6 +9,9 @@ require_once __DIR__ . '/../xmlseclibs.php';
 
 class EncrypteddataNodeOrderTest extends PHPUnit_Framework_TestCase {
 
+    /**
+     * @group hhvm
+     */
     public function testBasicDoc() {
 
         $dom = new DOMDocument();

@@ -11,6 +11,8 @@ class ValidateDigestSha512Test extends PHPUnit_Framework_TestCase {
 
     /**
      * Validate Digest SHA 512
+     *
+     * @group hhvm
      */
     public function test()
     {
