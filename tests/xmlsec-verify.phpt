@@ -2,7 +2,7 @@
 Basic Verify
 --FILE--
 <?php
-require(dirname(__FILE__) . '/../xmlseclibs.php');
+require(__DIR__ . '/../xmlseclibs.php');
 use RobRichards\XMLSecLibs\XMLSecurityDSig;
 use RobRichards\XMLSecLibs\XMLSecEnc;
 
@@ -10,7 +10,7 @@ $doc = new DOMDocument();
 $arTests = array('SIGN_TEST'=>'sign-basic-test.xml');
 
 foreach ($arTests AS $testName=>$testFile) {
-	$doc->load(dirname(__FILE__) . "/$testFile");
+	$doc->load(__DIR__ . "/$testFile");
 	$objXMLSecDSig = new XMLSecurityDSig();
 	
 	$objDSig = $objXMLSecDSig->locateSignature($doc);
@@ -36,7 +36,7 @@ foreach ($arTests AS $testName=>$testFile) {
 	$objKeyInfo = XMLSecEnc::staticLocateKeyInfo($objKey, $objDSig);
 
 	if (! $objKeyInfo->key && empty($key)) {
-		$objKey->loadKey(dirname(__FILE__) . '/mycert.pem', TRUE);
+		$objKey->loadKey(__DIR__ . '/mycert.pem', TRUE);
 	}
 
 	print $testName.": ";

@@ -4,11 +4,11 @@ WithComments with an ID reference.
 Checks that comments are removed when using an ID URI in a Reference.
 --FILE--
 <?php
-require(dirname(__FILE__) . '/../xmlseclibs.php');
+require(__DIR__ . '/../xmlseclibs.php');
 use RobRichards\XMLSecLibs\XMLSecurityDSig;
 
 $doc = new DOMDocument();
-$doc->load(dirname(__FILE__) . '/withcomment-id-uri-object.xml');
+$doc->load(__DIR__ . '/withcomment-id-uri-object.xml');
 $objXMLSecDSig = new XMLSecurityDSig();
 $objXMLSecDSig->idKeys = array('xml:id');
 

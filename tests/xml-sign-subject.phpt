@@ -2,16 +2,16 @@
 Basic Signature With Subject
 --FILE--
 <?php
-require(dirname(__FILE__) . '/../xmlseclibs.php');
+require(__DIR__ . '/../xmlseclibs.php');
 use RobRichards\XMLSecLibs\XMLSecurityDSig;
 use RobRichards\XMLSecLibs\XMLSecurityKey;
 
-if (file_exists(dirname(__FILE__) . '/sign-subject.xml')) {
-    unlink(dirname(__FILE__) . '/sign-subject.xml');
+if (file_exists(__DIR__ . '/sign-subject.xml')) {
+    unlink(__DIR__ . '/sign-subject.xml');
 }
 
 $doc = new DOMDocument();
-$doc->load(dirname(__FILE__) . '/basic-doc.xml');
+$doc->load(__DIR__ . '/basic-doc.xml');
 
 $objDSig = new XMLSecurityDSig();
 
@@ -21,7 +21,7 @@ $objDSig->addReference($doc, XMLSecurityDSig::SHA1, array('http://www.w3.org/200
 
 $objKey = new XMLSecurityKey(XMLSecurityKey::RSA_SHA1, array('type'=>'private'));
 /* load private key */
-$objKey->loadKey(dirname(__FILE__) . '/privkey.pem', TRUE);
+$objKey->loadKey(__DIR__ . '/privkey.pem', TRUE);
 
 /* if key has Passphrase, set it using $objKey->passphrase = <passphrase> " */
 
@@ -29,13 +29,13 @@ $objKey->loadKey(dirname(__FILE__) . '/privkey.pem', TRUE);
 $objDSig->sign($objKey);
 
 /* Add associated public key */
-$objDSig->add509Cert(file_get_contents(dirname(__FILE__) . '/mycert.pem'), TRUE, FALSE, array('subjectName'=>TRUE));
+$objDSig->add509Cert(file_get_contents(__DIR__ . '/mycert.pem'), TRUE, FALSE, array('subjectName'=>TRUE));
 
 $objDSig->appendSignature($doc->documentElement);
-$doc->save(dirname(__FILE__) . '/sign-subject.xml');
+$doc->save(__DIR__ . '/sign-subject.xml');
 
-$sign_output = file_get_contents(dirname(__FILE__) . '/sign-subject.xml');
-$sign_output_def = file_get_contents(dirname(__FILE__) . '/sign-subject.res');
+$sign_output = file_get_contents(__DIR__ . '/sign-subject.xml');
+$sign_output_def = file_get_contents(__DIR__ . '/sign-subject.res');
 if ($sign_output != $sign_output_def) {
 	echo "NOT THE SAME\n";
 }

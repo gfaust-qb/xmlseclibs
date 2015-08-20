@@ -2,6 +2,7 @@
 namespace RobRichards\XMLSecLibs;
 
 use DOMDocument;
+use DOMElement;
 use DOMNode;
 use DOMXPath;
 use Exception;
@@ -77,7 +78,7 @@ class XMLSecEnc
     public function __construct()
     {
         $this->_resetTemplate();
-    }
+}
 
     private function _resetTemplate()
     {
@@ -239,7 +240,8 @@ class XMLSecEnc
                 return null;
         }
 
-        return base64_decode($node->nodeValue);
+        $nodeValueEnc = base64_decode($node->nodeValue);
+        return $nodeValueEnc;
     }
 
     /**

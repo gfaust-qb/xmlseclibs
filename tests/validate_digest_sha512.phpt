@@ -2,12 +2,12 @@
 Validate Digest SHA 512
 --FILE--
 <?php
-require(dirname(__FILE__) . '/../xmlseclibs.php');
+require(__DIR__ . '/../xmlseclibs.php');
 use RobRichards\XMLSecLibs\XMLSecurityDSig;
 use RobRichards\XMLSecLibs\XMLSecurityKey;
 
 $doc = new DOMDocument();
-$doc->load(dirname(__FILE__) . '/basic-doc.xml');
+$doc->load(__DIR__ . '/basic-doc.xml');
 
 $objDSig = new XMLSecurityDSig();
 
@@ -17,12 +17,12 @@ $objDSig->addReference($doc, XMLSecurityDSig::SHA512, array('http://www.w3.org/2
 
 $objKey = new XMLSecurityKey(XMLSecurityKey::RSA_SHA1, array('type'=>'private'));
 /* load private key */
-$objKey->loadKey(dirname(__FILE__) . '/privkey.pem', TRUE);
+$objKey->loadKey(__DIR__ . '/privkey.pem', TRUE);
 
 $objDSig->sign($objKey);
 
 /* Add associated public key */
-$objDSig->add509Cert(file_get_contents(dirname(__FILE__) . '/mycert.pem'));
+$objDSig->add509Cert(file_get_contents(__DIR__ . '/mycert.pem'));
 
 $objDSig->appendSignature($doc->documentElement);
 

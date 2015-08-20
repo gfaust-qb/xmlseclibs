@@ -2,7 +2,7 @@
 Basic Signature with no namespace prefix
 --FILE--
 <?php
-require(dirname(__FILE__) . '/../xmlseclibs.php');
+require(__DIR__ . '/../xmlseclibs.php');
 use RobRichards\XMLSecLibs\XMLSecurityDSig;
 use RobRichards\XMLSecLibs\XMLSecurityKey;
 
@@ -10,7 +10,7 @@ $prefixes = array('ds' => 'ds', 'pfx' => 'pfx', 'none' => null);
 
 foreach ($prefixes as $file_out => $prefix) {
 	$doc = new DOMDocument();
-	$doc->load(dirname(__FILE__) . '/basic-doc.xml');
+	$doc->load(__DIR__ . '/basic-doc.xml');
 	
 	$objDSig = new XMLSecurityDSig($prefix);
 	
@@ -20,7 +20,7 @@ foreach ($prefixes as $file_out => $prefix) {
 	
 	$objKey = new XMLSecurityKey(XMLSecurityKey::RSA_SHA1, array('type'=>'private'));
 	/* load private key */
-	$objKey->loadKey(dirname(__FILE__) . '/privkey.pem', TRUE);
+	$objKey->loadKey(__DIR__ . '/privkey.pem', TRUE);
 	
 	/* if key has Passphrase, set it using $objKey->passphrase = <passphrase> " */
 	
@@ -28,19 +28,19 @@ foreach ($prefixes as $file_out => $prefix) {
 	
 	/* Add associated public key */
 	$options = array('issuerSerial' => true, 'subjectName' => true, );
-	$objDSig->add509Cert(file_get_contents(dirname(__FILE__) . '/mycert.pem'), true, false, $options);
+	$objDSig->add509Cert(file_get_contents(__DIR__ . '/mycert.pem'), true, false, $options);
 	
 	$objDSig->appendSignature($doc->documentElement);
 	$sig_out = "/xml-sign-prefix-$file_out.xml";
-	$doc->save(dirname(__FILE__) . $sig_out);
+	$doc->save(__DIR__ . $sig_out);
 	
-	$sign_output = file_get_contents(dirname(__FILE__) . $sig_out);
-	$sign_output_def = file_get_contents(dirname(__FILE__) . "/xml-sign-prefix-$file_out.res");
+	$sign_output = file_get_contents(__DIR__ . $sig_out);
+	$sign_output_def = file_get_contents(__DIR__ . "/xml-sign-prefix-$file_out.res");
 	if ($sign_output != $sign_output_def) {
 		echo "NOT THE SAME\n";
 	}
 	echo "DONE\n";
-	unlink(dirname(__FILE__) . $sig_out);
+	unlink(__DIR__ . $sig_out);
 }
 ?>
 --EXPECTF--

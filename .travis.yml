@@ -16,7 +16,7 @@ matrix:
     
 script:
   - if [[ $EXECUTE_COVERAGE == 'true' ]]; then phpunit --coverage-clover clover.xml tests; fi
-  - if [[ $EXECUTE_COVERAGE != 'true' ]]; then phpunit tests; fi
-  
+  - if [[ $EXECUTE_COVERAGE != 'true' ]]; then phpunit --group hhvm tests; fi
+
 after_success:
   - if [[ $EXECUTE_COVERAGE == 'true' ]]; then bash <(curl -s https://codecov.io/bash); fi
