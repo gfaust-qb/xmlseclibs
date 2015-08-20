@@ -2,6 +2,7 @@
 namespace RobRichards\XMLSecLibs;
 
 use DOMDocument;
+use DOMElement;
 use DOMNode;
 use DOMXPath;
 use Exception;
@@ -77,7 +78,7 @@ class XMLSecEnc
     public function __construct()
     {
         $this->_resetTemplate();
-    }
+}
 
     private function _resetTemplate()
     {
