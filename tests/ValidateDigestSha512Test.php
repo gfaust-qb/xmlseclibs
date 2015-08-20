@@ -1,9 +1,9 @@
 <?php
 namespace RobRichards\XMLSecLibs;
 
+use PHPUnit_Framework_TestCase;
 use DOMDocument;
 use DOMXPath;
-use PHPUnit_Framework_TestCase;
 
 require_once(__DIR__ . '/../xmlseclibs.php');
 
