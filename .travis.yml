@@ -13,11 +13,15 @@ matrix:
         - EXECUTE_COVERAGE=true
     - php: 7
     - php: hhvm
+      env:
+        - DISPLAY_LOGS=true
     
 script:
   - if [[ $EXECUTE_COVERAGE == 'true' ]]; then phpunit --coverage-clover clover.xml tests; fi
   - if [[ $EXECUTE_COVERAGE != 'true' ]]; then phpunit --verbose tests; fi
 
+after_failure:
+  - if [[ $DISPLAY_LOGS == 'true' ]]; then tail -n 300 /tmp/stacktrace.2375.log; fi
   
 after_success:
   - if [[ $EXECUTE_COVERAGE == 'true' ]]; then bash <(curl -s https://codecov.io/bash); fi
