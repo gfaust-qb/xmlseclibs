@@ -16,7 +16,7 @@ matrix:
     
 script:
   - if [[ $EXECUTE_COVERAGE == 'true' ]]; then phpunit --coverage-clover clover.xml tests; fi
-  - if [[ $EXECUTE_COVERAGE != 'true' && $TRAVIS_PHP_VERSION != 'hhvm']]; then phpunit tests; fi
+  - if [[[[ $EXECUTE_COVERAGE != 'true']] && [[$TRAVIS_PHP_VERSION != 'hhvm']]]]; then phpunit tests; fi
   - if [[ $TRAVIS_PHP_VERSION == 'hhvm']]; then phpunit -v tests; fi
 
   
