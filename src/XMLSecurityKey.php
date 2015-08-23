@@ -111,33 +111,39 @@ class XMLSecurityKey
     {
         switch ($type) {
             case (self::TRIPLEDES_CBC):
-                $this->cryptParams['library'] = 'mcrypt';
-                $this->cryptParams['cipher'] = MCRYPT_TRIPLEDES;
-                $this->cryptParams['mode'] = MCRYPT_MODE_CBC;
+                $this->cryptParams['library'] = 'openssl';
                 $this->cryptParams['method'] = 'http://www.w3.org/2001/04/xmlenc#tripledes-cbc';
                 $this->cryptParams['keysize'] = 24;
+                $this->cryptParams['padding'] = OPENSSL_PKCS1_PADDING;
+                $this->cryptParams['digest'] = 'DES3';
                 break;
             case (self::AES128_CBC):
-                $this->cryptParams['library'] = 'mcrypt';
-                $this->cryptParams['cipher'] = MCRYPT_RIJNDAEL_128;
-                $this->cryptParams['mode'] = MCRYPT_MODE_CBC;
+                $this->cryptParams['library'] = 'openssl';
                 $this->cryptParams['method'] = 'http://www.w3.org/2001/04/xmlenc#aes128-cbc';
                 $this->cryptParams['keysize'] = 16;
+                $this->cryptParams['padding'] = OPENSSL_PKCS1_PADDING;
+                $this->cryptParams['digest'] = 'AES128';
                 break;
             case (self::AES192_CBC):
-                $this->cryptParams['library'] = 'mcrypt';
-                $this->cryptParams['cipher'] = MCRYPT_RIJNDAEL_128;
-                $this->cryptParams['mode'] = MCRYPT_MODE_CBC;
+                $this->cryptParams['library'] = 'openssl';
                 $this->cryptParams['method'] = 'http://www.w3.org/2001/04/xmlenc#aes192-cbc';
                 $this->cryptParams['keysize'] = 24;
+                $this->cryptParams['padding'] = OPENSSL_PKCS1_PADDING;
+                $this->cryptParams['digest'] = 'AES192';
                 break;
             case (self::AES256_CBC):
+                $this->cryptParams['library'] = 'openssl';
+                $this->cryptParams['method'] = 'http://www.w3.org/2001/04/xmlenc#aes256-cbc';
+                $this->cryptParams['keysize'] = 32;
+                $this->cryptParams['padding'] = OPENSSL_PKCS1_PADDING;
+                $this->cryptParams['digest'] = 'AES256';/*
                 $this->cryptParams['library'] = 'mcrypt';
                 $this->cryptParams['cipher'] = MCRYPT_RIJNDAEL_128;
                 $this->cryptParams['mode'] = MCRYPT_MODE_CBC;
                 $this->cryptParams['method'] = 'http://www.w3.org/2001/04/xmlenc#aes256-cbc';
-                $this->cryptParams['keysize'] = 32;
+                $this->cryptParams['keysize'] = 32;*/
                 break;
+                //throw new XMLSecurityException('Certificate "type" (private/public) must be passed via parameters');
             case (self::RSA_1_5):
                 $this->cryptParams['library'] = 'openssl';
                 $this->cryptParams['padding'] = OPENSSL_PKCS1_PADDING;
@@ -332,17 +338,21 @@ class XMLSecurityKey
             $this->x509Certificate = null;
         }
         if ($this->cryptParams['library'] == 'openssl') {
-            if ($this->cryptParams['type'] == 'public') {
-                if ($isCert) {
-                    /* Load the thumbprint if this is an X509 certificate. */
-                    $this->X509Thumbprint = self::getRawThumbprint($this->key);
-                }
-                $this->key = openssl_get_publickey($this->key);
-                if (! $this->key) {
-                    throw new XMLSecurityException('Unable to extract public key');
+            if (array_key_exists('type', $this->cryptParams) && !empty($this->cryptParams['type'])) {
+                if ($this->cryptParams['type'] == 'public') {
+                    if ($isCert) {
+                        /* Load the thumbprint if this is an X509 certificate. */
+                        $this->X509Thumbprint = self::getRawThumbprint($this->key);
+                    }
+                    $this->key = openssl_get_publickey($this->key);
+                    if (!$this->key) {
+                        throw new XMLSecurityException('Unable to extract public key');
+                    }
+                } else { //private
+                    $this->key = openssl_get_privatekey($this->key, $this->passphrase);
                 }
             } else {
-                $this->key = openssl_get_privatekey($this->key, $this->passphrase);
+
             }
         } else if ($this->cryptParams['cipher'] == MCRYPT_RIJNDAEL_128) {
             /* Check key length */
@@ -419,14 +429,22 @@ class XMLSecurityKey
      */
     private function encryptOpenSSL($data)
     {
-        if ($this->cryptParams['type'] == 'public') {
-            if (! openssl_public_encrypt($data, $encrypted_data, $this->key, $this->cryptParams['padding'])) {
-                throw new Exception('Failure encrypting Data');
+        if (array_key_exists('type', $this->cryptParams) && !empty($this->cryptParams['type'])) {
+            if ($this->cryptParams['type'] == 'public') {
+                if (!openssl_public_encrypt($data, $encrypted_data, $this->key, $this->cryptParams['padding'])) {
+                    throw new XMLSecurityException('Failure encrypting Data');
+                }
+            } else {
+                if (!openssl_private_encrypt($data, $encrypted_data, $this->key, $this->cryptParams['padding'])) {
+                    throw new XMLSecurityException('Failure encrypting Data');
+                }
             }
         } else {
-            if (! openssl_private_encrypt($data, $encrypted_data, $this->key, $this->cryptParams['padding'])) {
-                throw new Exception('Failure encrypting Data');
-            }
+            $iv_length = openssl_cipher_iv_length($this->cryptParams['digest']);
+            $this->iv = openssl_random_pseudo_bytes($iv_length);
+            $data = substr($data, $iv_length);
+
+            $encrypted_data = openssl_encrypt($data, $this->cryptParams['digest'], $this->key, 'OPENSSL_RAW_DATA'|'OPENSSL_ZERO_PADDING', $this->iv);
         }
         return $encrypted_data;
     }
@@ -440,14 +458,27 @@ class XMLSecurityKey
      */
     private function decryptOpenSSL($data)
     {
-        if ($this->cryptParams['type'] == 'public') {
-            if (! openssl_public_decrypt($data, $decrypted, $this->key, $this->cryptParams['padding'])) {
-                throw new XMLSecurityException('Failure decrypting Data');
+        if (array_key_exists('type', $this->cryptParams) && !empty($this->cryptParams['type'])) {
+            if ($this->cryptParams['type'] == 'public') {
+                if (!openssl_public_decrypt($data, $decrypted, $this->key, $this->cryptParams['padding'])) {
+                    throw new XMLSecurityException('Failure decrypting Data');
+                }
+            } else {
+                if (!openssl_private_decrypt($data, $decrypted, $this->key, $this->cryptParams['padding'])) {
+                    throw new XMLSecurityException('Failure decrypting Data');
+                }
             }
         } else {
-            if (! openssl_private_decrypt($data, $decrypted, $this->key, $this->cryptParams['padding'])) {
-                throw new XMLSecurityException('Failure decrypting Data');
+            $ivSize    = openssl_cipher_iv_length($this->cryptParams['digest']);
+            $this->iv  = substr($data,0,$ivSize);
+            $data      = substr($data,$ivSize);
+            $key       = $this->key;
+            if (!defined('OPENSSL_RAW_DATA')) {
+                define('OPENSSL_RAW_DATA', 1);
             }
+            $raw       = OPENSSL_RAW_DATA;
+            $digest    = $this->cryptParams['digest'];
+            $decrypted = openssl_decrypt($data, $digest, $key, $raw, $this->iv);
         }
         return $decrypted;
     }
