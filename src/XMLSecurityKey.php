@@ -443,8 +443,10 @@ class XMLSecurityKey
             $iv_length = openssl_cipher_iv_length($this->cryptParams['digest']);
             $this->iv = openssl_random_pseudo_bytes($iv_length);
             $data = substr($data, $iv_length);
-
-            $encrypted_data = openssl_encrypt($data, $this->cryptParams['digest'], $this->key, 'OPENSSL_RAW_DATA'|'OPENSSL_ZERO_PADDING', $this->iv);
+            if (!defined('OPENSSL_RAW_DATA')) {
+                define('OPENSSL_RAW_DATA', 1);
+            }
+            $encrypted_data = openssl_encrypt($data, $this->cryptParams['digest'], $this->key, OPENSSL_RAW_DATA, $this->iv);
         }
         return $encrypted_data;
     }
