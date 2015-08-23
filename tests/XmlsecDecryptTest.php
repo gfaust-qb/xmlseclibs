@@ -1,10 +1,10 @@
 <?php
 namespace RobRichards\XMLSecLibs;
 
-use PHPUnit_Framework_TestCase;
 use DOMDocument;
 use DOMNode;
 use Exception;
+use PHPUnit_Framework_TestCase;
 
 require_once(__DIR__ . '/../xmlseclibs.php');
 
@@ -84,8 +84,8 @@ class XmlsecDecryptTest extends PHPUnit_Framework_TestCase {
                 $resDoc->load($outfile);
                 $res = $resDoc->saveXML();
 
-                $this->assertNotNull($output);
-                $this->assertEquals($output, $res, 'Decrypt: ' . $testName);
+                //$this->assertNotNull($output);
+                $this->assertEquals($res, $output, 'Decrypt: ' . $testName);
 
             }
 
