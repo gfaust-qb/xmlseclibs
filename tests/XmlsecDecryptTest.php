@@ -25,9 +25,13 @@ class XmlsecDecryptTest extends PHPUnit_Framework_TestCase {
 
         foreach ($arTests AS $testName=>$testFile) {
             $output = NULL;
-
+try {
             $doc->load(__DIR__ . "/$testFile");
-
+} catch(\DOMException $e) {
+    var_dump($e);
+} catch (Exception $e) {
+    var_dump($e);
+}
             $errors = false;
             $errMsg = '';
             try {
