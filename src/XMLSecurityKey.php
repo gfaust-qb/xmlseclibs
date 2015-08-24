@@ -717,10 +717,13 @@ class XMLSecurityKey
         $iv        = $this->iv;
         $dataEnc   = substr($data, $ivSize);
         $key       = $this->key;
+        if (!defined('OPENSSL_ZERO_PADDING')) {
+            define('OPENSSL_ZERO_PADDING', 2);
+        }
         if (!defined('OPENSSL_RAW_DATA')) {
             define('OPENSSL_RAW_DATA', 1);
         }
-        $raw       = OPENSSL_RAW_DATA;
+        $raw       = OPENSSL_RAW_DATA|OPENSSL_ZERO_PADDING; //OPENSSL_RAW_DATA;
         if (empty($key)){
             throw new XMLSecurityException('No key given.');
         }
