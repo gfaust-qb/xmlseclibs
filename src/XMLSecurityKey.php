@@ -132,16 +132,19 @@ class XMLSecurityKey
                 $this->cryptParams['digest'] = 'AES192';
                 break;
             case (self::AES256_CBC):
-                $this->cryptParams['library'] = 'openssl';
-                $this->cryptParams['method'] = 'http://www.w3.org/2001/04/xmlenc#aes256-cbc';
-                $this->cryptParams['keysize'] = 32;
-                $this->cryptParams['padding'] = OPENSSL_PKCS1_PADDING;
-                $this->cryptParams['digest'] = 'AES256';/*
-                $this->cryptParams['library'] = 'mcrypt';
-                $this->cryptParams['cipher'] = MCRYPT_RIJNDAEL_128;
-                $this->cryptParams['mode'] = MCRYPT_MODE_CBC;
-                $this->cryptParams['method'] = 'http://www.w3.org/2001/04/xmlenc#aes256-cbc';
-                $this->cryptParams['keysize'] = 32;*/
+                if (true) {
+                    $this->cryptParams['library'] = 'openssl';
+                    $this->cryptParams['method'] = 'http://www.w3.org/2001/04/xmlenc#aes256-cbc';
+                    $this->cryptParams['keysize'] = 32;
+                    $this->cryptParams['padding'] = OPENSSL_PKCS1_PADDING;
+                    $this->cryptParams['digest'] = 'AES256';
+                } else {
+                    $this->cryptParams['library'] = 'mcrypt';
+                    $this->cryptParams['cipher'] = MCRYPT_RIJNDAEL_128;
+                    $this->cryptParams['mode'] = MCRYPT_MODE_CBC;
+                    $this->cryptParams['method'] = 'http://www.w3.org/2001/04/xmlenc#aes256-cbc';
+                    $this->cryptParams['keysize'] = 32;
+                }
                 break;
                 //throw new XMLSecurityException('Certificate "type" (private/public) must be passed via parameters');
             case (self::RSA_1_5):
@@ -351,23 +354,12 @@ class XMLSecurityKey
                 } else { //private
                     $this->key = openssl_get_privatekey($this->key, $this->passphrase);
                 }
-            } else {
+            } else if (in_array($this->cryptParams['digest'], array('AES192', 'AES256'))) {
+                $this->checkKeyLength();
 
             }
-        } else if ($this->cryptParams['cipher'] == MCRYPT_RIJNDAEL_128) {
-            /* Check key length */
-            switch ($this->type) {
-                case (self::AES256_CBC):
-                    if (strlen($this->key) < 25) {
-                        throw new XMLSecurityException('Key must contain at least 25 characters for this cipher');
-                    }
-                    break;
-                case (self::AES192_CBC):
-                    if (strlen($this->key) < 17) {
-                        throw new XMLSecurityException('Key must contain at least 17 characters for this cipher');
-                    }
-                    break;
-            }
+        } else if ($this->cryptParams['cipher'] == MCRYPT_RIJNDAEL_128 || in_array($this->cryptParams['digest'], array('AES192', 'AES256'))) {
+            $this->checkKeyLength();
         }
     }
 
@@ -719,37 +711,66 @@ class XMLSecurityKey
     private function openSSLDecrypt($data)
     {
         $decrypted = '';
-        $ivSize    = openssl_cipher_iv_length($this->cryptParams['digest']);
+        $cipher    = $this->getCipher();
+        $ivSize    = openssl_cipher_iv_length($cipher);
         $this->iv  = substr($data, 0, $ivSize);
-        $iv = $this->iv;
-        $data      = substr($data, $ivSize);
+        $iv        = $this->iv;
+        $dataEnc   = substr($data, $ivSize);
         $key       = $this->key;
         if (!defined('OPENSSL_RAW_DATA')) {
             define('OPENSSL_RAW_DATA', 1);
         }
-        $raw                 = OPENSSL_RAW_DATA;
-        $digest              = $this->cryptParams['digest'];
-        $ciphers             = openssl_get_cipher_methods();
-        $ciphers_and_aliases = openssl_get_cipher_methods(true);
-        $cipher_aliases      = array_diff($ciphers_and_aliases, $ciphers);
-        $cipher              = array_search($digest, $cipher_aliases);
-        if(!$cipher) {
-            throw new XMLSecurityException('Unknown cipher method: ' . $digest);
-        }
+        $raw       = OPENSSL_RAW_DATA;
         if (empty($key)){
             throw new XMLSecurityException('No key given.');
         }
         if (empty($iv)) {
             throw new XMLSecurityException('Initialazing Vector may not be empty');
         }
-        if (!empty($data)) {
-            $decrypted = openssl_decrypt($data, $digest, $key, $raw, $iv);
+        if (!empty($dataEnc)) {
+            $decrypted = openssl_decrypt($data, $cipher, $key, $raw, $iv);
             if ($decrypted === false) {
-                throw new XMLSecurityException('openssl_decrypt returns an error.');
+                $errMsg = '';
+                while ($msg = openssl_error_string()) {
+                    $errMsg .= $msg . PHP_EOL;
+                }
+                throw new XMLSecurityException('openssl_decrypt() returns an error: ' . $errMsg);
             }
         }
 
         return $decrypted;
+    }
+
+    /**
+     * @return mixed
+     * @throws XMLSecurityException
+     */
+    private function getCipher()
+    {
+        $digest              = $this->cryptParams['digest'];
+        $ciphers_and_aliases = openssl_get_cipher_methods(true);
+        $cipher              = in_array($digest, $ciphers_and_aliases);
+        if (!$cipher) {
+            throw new XMLSecurityException('Unknown cipher method: ' . $digest);
+        }
+        return $digest;
+    }
+
+    private function checkKeyLength()
+    {
+        /* Check key length */
+        switch ($this->type) {
+            case (self::AES256_CBC):
+                if (strlen($this->key) < 25) {
+                    throw new XMLSecurityException('Key must contain at least 25 characters for this cipher');
+                }
+                break;
+            case (self::AES192_CBC):
+                if (strlen($this->key) < 17) {
+                    throw new XMLSecurityException('Key must contain at least 17 characters for this cipher');
+                }
+                break;
+        }
     }
 
 }
