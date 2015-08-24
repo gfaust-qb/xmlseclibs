@@ -17,7 +17,6 @@ class XmlsecDecryptTest extends PHPUnit_Framework_TestCase {
      */
     public function test()
     {
-                try {
         //$this->markTestSkipped('must be revisited.');
         $arTests = array('AOESP_SHA1'=>'oaep_sha1-res.xml');
 
@@ -25,13 +24,7 @@ class XmlsecDecryptTest extends PHPUnit_Framework_TestCase {
 
         foreach ($arTests AS $testName=>$testFile) {
             $output = NULL;
-            try {
-                $doc->load(__DIR__ . "/$testFile");
-            } catch(\DOMException $e) {
-                var_dump($e);die();
-            } catch (Exception $e) {
-                var_dump($e);
-            }
+            $doc->load(__DIR__ . "/$testFile");
             $errors = false;
             $errMsg = '';
             try {
@@ -99,10 +92,6 @@ class XmlsecDecryptTest extends PHPUnit_Framework_TestCase {
             }
 
         }
-                } catch (\DOMException $e) {
-                    print_r($e->getMessage() . $e->getLine(), false);
-                }
-
         //--EXPECTF--
         //AOESP_SHA1: Passed
 

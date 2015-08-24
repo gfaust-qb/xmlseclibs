@@ -715,15 +715,24 @@ class XMLSecurityKey
         $ivSize    = openssl_cipher_iv_length($cipher);
         $this->iv  = substr($data, 0, $ivSize);
         $iv        = $this->iv;
-        $dataEnc   = substr($data, $ivSize);
         $key       = $this->key;
+        $blockSize = 128;
+        $dataEnc   = mb_substr($data, $ivSize);
         if (!defined('OPENSSL_ZERO_PADDING')) {
             define('OPENSSL_ZERO_PADDING', 2);
         }
         if (!defined('OPENSSL_RAW_DATA')) {
             define('OPENSSL_RAW_DATA', 1);
+            $dataPad = str_pad($dataEnc, mb_strlen($dataEnc) + ($blockSize - mb_strlen($dataEnc) % $blockSize) % $blockSize, chr(0));
+            $substrDataEnc = mb_substr($dataEnc, -$blockSize);
+            $padding = str_repeat(chr($blockSize), $blockSize) ^ $substrDataEnc;
+            $lenPadding = strlen($padding);
+            $hasPadding = true;
+//            echo $padding;
+            $dataPad.= mb_substr(openssl_encrypt($padding, $cipher, $key, true, $iv), 0, $blockSize);
+//            echo $dataEnc;
         }
-        $raw       = OPENSSL_RAW_DATA|OPENSSL_ZERO_PADDING; //OPENSSL_RAW_DATA;
+        $raw       = 1;//OPENSSL_RAW_DATA|OPENSSL_ZERO_PADDING; //OPENSSL_RAW_DATA;
         if (empty($key)){
             throw new XMLSecurityException('No key given.');
         }
@@ -731,7 +740,7 @@ class XMLSecurityKey
             throw new XMLSecurityException('Initialazing Vector may not be empty');
         }
         if (!empty($dataEnc)) {
-            $decrypted = openssl_decrypt($data, $cipher, $key, $raw, $iv);
+            $decrypted = openssl_decrypt($dataPad, $cipher, $key, $raw, $iv);
             if ($decrypted === false) {
                 $errMsg = '';
                 while ($msg = openssl_error_string()) {
@@ -741,7 +750,20 @@ class XMLSecurityKey
             }
         }
 
-        return $decrypted;
+        if ($hasPadding) {
+                        //$decrypted = base64_encode($decrypted);
+                        $decryptedPad = substr($decrypted, 0, -$lenPadding);
+                        $decrypted = $decryptedPad;
+            //$decrypted = base64_decode($decrypted);
+
+            /*$length = ord($text[strlen($text) - 1]);
+                    if (!$length || $length > $this->block_size) {
+                        return false;
+                    }
+                    return substr($text, 0, -$length);*/
+        }
+
+        return rtrim($decrypted);
     }
 
     /**
