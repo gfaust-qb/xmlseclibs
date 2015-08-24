@@ -471,16 +471,7 @@ class XMLSecurityKey
                 }
             }
         } else {
-            $ivSize    = openssl_cipher_iv_length($this->cryptParams['digest']);
-            $this->iv  = substr($data,0,$ivSize);
-            $data      = substr($data,$ivSize);
-            $key       = $this->key;
-            if (!defined('OPENSSL_RAW_DATA')) {
-                define('OPENSSL_RAW_DATA', 1);
-            }
-            $raw       = OPENSSL_RAW_DATA;
-            $digest    = $this->cryptParams['digest'];
-            $decrypted = openssl_decrypt($data, $digest, $key, $raw, $this->iv);
+            $decrypted = $this->openSSLDecrypt($data);
         }
         return $decrypted;
     }
@@ -719,6 +710,46 @@ class XMLSecurityKey
         $objKey->encryptedCtx = $objenc;
         XMLSecEnc::staticLocateKeyInfo($objKey, $element);
         return $objKey;
+    }
+
+    /**
+     * @param $data
+     * @return string
+     */
+    private function openSSLDecrypt($data)
+    {
+        $decrypted = '';
+        $ivSize    = openssl_cipher_iv_length($this->cryptParams['digest']);
+        $this->iv  = substr($data, 0, $ivSize);
+        $iv = $this->iv;
+        $data      = substr($data, $ivSize);
+        $key       = $this->key;
+        if (!defined('OPENSSL_RAW_DATA')) {
+            define('OPENSSL_RAW_DATA', 1);
+        }
+        $raw                 = OPENSSL_RAW_DATA;
+        $digest              = $this->cryptParams['digest'];
+        $ciphers             = openssl_get_cipher_methods();
+        $ciphers_and_aliases = openssl_get_cipher_methods(true);
+        $cipher_aliases      = array_diff($ciphers_and_aliases, $ciphers);
+        $cipher              = array_search($digest, $cipher_aliases);
+        if(!$cipher) {
+            throw new XMLSecurityException('Unknown cipher method: ' . $digest);
+        }
+        if (empty($key)){
+            throw new XMLSecurityException('No key given.');
+        }
+        if (empty($iv)) {
+            throw new XMLSecurityException('Initialazing Vector may not be empty');
+        }
+        if (!empty($data)) {
+            $decrypted = openssl_decrypt($data, $digest, $key, $raw, $iv);
+            if ($decrypted === false) {
+                throw new XMLSecurityException('openssl_decrypt returns an error.');
+            }
+        }
+
+        return $decrypted;
     }
 
 }

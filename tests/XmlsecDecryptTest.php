@@ -17,7 +17,7 @@ class XmlsecDecryptTest extends PHPUnit_Framework_TestCase {
      */
     public function test()
     {
-        $this->markTestSkipped('must be revisited.');
+        //$this->markTestSkipped('must be revisited.');
         $arTests = array('AOESP_SHA1'=>'oaep_sha1-res.xml');
 
         $doc = new DOMDocument();
@@ -27,6 +27,8 @@ class XmlsecDecryptTest extends PHPUnit_Framework_TestCase {
 
             $doc->load(__DIR__ . "/$testFile");
 
+            $errors = false;
+            $errMsg = '';
             try {
                 $objenc = new XMLSecEnc();
                 $encData = $objenc->locateEncryptedData($doc);
@@ -71,8 +73,11 @@ class XmlsecDecryptTest extends PHPUnit_Framework_TestCase {
                     }
                 }
             } catch (Exception $e) {
-
+                $errors = true;
+                $errMsg = $e->getMessage();
             }
+
+            $this->assertFalse($errors, $errMsg);
 
             $outfile = __DIR__ . "/basic-doc.xml";
             $res = NULL;
