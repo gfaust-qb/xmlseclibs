@@ -85,10 +85,13 @@ class XmlsecDecryptTest extends PHPUnit_Framework_TestCase {
             $this->assertFileExists($outfile);
 
             if (file_exists($outfile)) {
-                $resDoc = new DOMDocument();
-                $resDoc->load($outfile);
-                $res = $resDoc->saveXML();
-
+                try {
+                    $resDoc = new DOMDocument();
+                    $resDoc->load($outfile);
+                    $res = $resDoc->saveXML();
+                } catch (\DOMException $e) {
+                    print_r($e->getMessage(), false);
+                }
                 //$this->assertNotNull($output);
                 $this->assertEquals($res, $output, 'Decrypt: ' . $testName);
 
