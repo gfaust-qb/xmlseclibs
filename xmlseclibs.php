@@ -41,6 +41,8 @@
  * @version   2.1.0-dev
  */
 
+include_once('vendor/autoload.php');
+
 /**
  * @param string $className
  */
