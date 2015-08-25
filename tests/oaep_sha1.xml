@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Basic XML example -->
-<xenc:EncryptedData xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" Type="http://www.w3.org/2001/04/xmlenc#Element"><xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes256-cbc"/><dsig:KeyInfo xmlns:dsig="http://www.w3.org/2000/09/xmldsig#"><xenc:EncryptedKey><xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p"/><xenc:CipherData><xenc:CipherValue>1v5Sw3goI57h/xNk1wf5cK9Y8ycObHP5+xM1aZx/5t681yoOcjJ+QGc6T1hq+AG8Q/FPR0O63Uf8jxn6dutyuzxy1zIngWiRgmdsg2T+aanrGnX66TzliGK8ATvUxxDA6/Zh1d/9Xahk3GTYufYXuSFZEoAW1BrIPSistpQu/3ryTN3K0/dqC6bigoBGauNIop3FziS3QewBWtC6gO0TFFVjPCeE/w+ZFzWrNVfnHpVEH9Q9VYH9/rp8n7sFuVNG2RGpu25eB+mE483/EO5bWTv5y/cZzMJFR2T33y3Jk1d8vhxt0oEInkYpRPM99jRmWNw5vbRajbzSLW8eJLcCPg==</xenc:CipherValue></xenc:CipherData></xenc:EncryptedKey></dsig:KeyInfo>
-   <xenc:CipherData>
-      <xenc:CipherValue>n+Jj2oaWrAt55V/xeiByK2TjJo4A8xOz5tlKQRsGWkHFFONNU4tmzTpOyDlTmoURqw7ZZ1svZqKWtyuTwGm48mCESMkKTx2HBOFEKMoy/odBdyglyXqY/rB3Ddiq7xcM</xenc:CipherValue>
-   </xenc:CipherData>
-</xenc:EncryptedData>

@@ -1,10 +1,10 @@
 <?php
 namespace RobRichards\XMLSecLibs;
 
-use PHPUnit_Framework_TestCase;
 use DOMDocument;
 use DOMNode;
 use Exception;
+use PHPUnit_Framework_TestCase;
 
 require_once(__DIR__ . '/../xmlseclibs.php');
 
@@ -24,14 +24,14 @@ class XmlsecDecryptTest extends PHPUnit_Framework_TestCase {
 
         foreach ($arTests AS $testName=>$testFile) {
             $output = NULL;
-
             $doc->load(__DIR__ . "/$testFile");
-
+            $errors = false;
+            $errMsg = '';
             try {
                 $objenc = new XMLSecEnc();
                 $encData = $objenc->locateEncryptedData($doc);
 
-                $this->assertNotNull($encData);
+                $this->assertNotNull($encData, 'Encrypted Data.');
 
                 $objenc->setNode($encData);
                 $objenc->type = $encData->getAttribute("Type");
@@ -71,8 +71,11 @@ class XmlsecDecryptTest extends PHPUnit_Framework_TestCase {
                     }
                 }
             } catch (Exception $e) {
-
+                $errors = true;
+                $errMsg = $e->getMessage();
             }
+
+            $this->assertFalse($errors, $errMsg);
 
             $outfile = __DIR__ . "/basic-doc.xml";
             $res = NULL;
@@ -80,17 +83,15 @@ class XmlsecDecryptTest extends PHPUnit_Framework_TestCase {
             $this->assertFileExists($outfile);
 
             if (file_exists($outfile)) {
-                $resDoc = new DOMDocument();
-                $resDoc->load($outfile);
-                $res = $resDoc->saveXML();
-
-                $this->assertNotNull($output);
-                $this->assertEquals($output, $res, 'Decrypt: ' . $testName);
+                    $resDoc = new DOMDocument();
+                    $resDoc->load($outfile);
+                    $res = $resDoc->saveXML();
+                //$this->assertNotNull($output);
+                $this->assertEquals($res, $output, 'Decrypt: ' . $testName);
 
             }
 
         }
-
         //--EXPECTF--
         //AOESP_SHA1: Passed
 

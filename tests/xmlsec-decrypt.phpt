@@ -3,6 +3,11 @@ Basic Decryption
 --FILE--
 <?php
 require(__DIR__ . '/../xmlseclibs.php');
+set_include_path(get_include_path() . PATH_SEPARATOR .  __DIR__ . '/../vendor/phpseclib/phpseclib');
+include('phpseclib/Crypt/Base.php');
+include('phpseclib/Crypt/Rijndael.php');
+include('phpseclib/Crypt/AES.php');
+
 use RobRichards\XMLSecLibs\XMLSecEnc;
 
 /* When we need to locate our own key based on something like a key name */
