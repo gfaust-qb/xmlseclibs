@@ -4,7 +4,6 @@ namespace RobRichards\XMLSecLibs;
 use DOMElement;
 use Exception;
 use phpseclib\Crypt\AES;
-use phpseclib\Crypt\DES;
 use phpseclib\Crypt\TripleDES;
 
 /**
@@ -665,7 +664,7 @@ class XMLSecurityKey
 
         $lib->setIV($this->iv);
         $lib->setKey($this->key);
-        $lib->setPreferredEngine(AES::ENGINE_OPENSSL);
+        //$lib->setPreferredEngine(AES::ENGINE_OPENSSL);
 
         $decrypted = $lib->decrypt($dataEnc);
 
