@@ -4,6 +4,8 @@ namespace RobRichards\XMLSecLibs;
 use DOMElement;
 use Exception;
 use phpseclib\Crypt\AES;
+use phpseclib\Crypt\DES;
+use phpseclib\Crypt\TripleDES;
 
 /**
  * xmlseclibs.php
@@ -400,18 +402,7 @@ class XMLSecurityKey
                 }
             }
         } else {
-            $ivSize    = openssl_cipher_iv_length($this->cryptParams['digest']);
-            $this->iv  = substr($data,0,$ivSize);
-            $dataEnc   = substr($data,$ivSize);
-
-            $lib = new AES();
-            $lib->setKeyLength(256);
-            $lib->setBlockLength(128);
-            $lib->setIV($this->iv);
-            $lib->setKey($this->key);
-            $lib->setPreferredEngine(AES::ENGINE_OPENSSL);
-
-            $decrypted = $lib->decrypt($dataEnc);
+            $decrypted = $this->decryptPHPSeclib($data);
         }
         return $decrypted;
     }
@@ -640,6 +631,45 @@ class XMLSecurityKey
         $objKey->encryptedCtx = $objenc;
         XMLSecEnc::staticLocateKeyInfo($objKey, $element);
         return $objKey;
+    }
+
+    /**
+     * @param $data
+     * @return String
+     */
+    private function decryptPHPSeclib($data)
+    {
+        $ivSize   = openssl_cipher_iv_length($this->cryptParams['digest']);
+        $this->iv = substr($data, 0, $ivSize);
+        $dataEnc  = substr($data, $ivSize);
+
+        $digestParams = explode('-', $this->cryptParams['digest']);
+
+        // At the moment there is only support for CBC-Mode.
+        switch($digestParams[0]) {
+            case 'AES':
+                $lib = new AES();
+                $lib->setKeyLength($digestParams[1]);
+                $lib->setBlockLength(128);
+                break;
+            case 'DES':
+                if ($digestParams[1] === 'EDE3') {
+                    $lib = new TripleDES();
+                } else {
+                    throw new XMLSecurityException('Unsupported DES Mode: ' . $digestParams[1]);
+                }
+                break;
+            default:
+                throw new XMLSecurityException('Not supported cipher.');
+        }
+
+        $lib->setIV($this->iv);
+        $lib->setKey($this->key);
+        $lib->setPreferredEngine(AES::ENGINE_OPENSSL);
+
+        $decrypted = $lib->decrypt($dataEnc);
+
+        return $decrypted;
     }
 
 }
