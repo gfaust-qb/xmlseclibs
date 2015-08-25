@@ -13,7 +13,6 @@ class XmlsecDecryptContentTest extends PHPUnit_Framework_TestCase {
 
     /**
      * Basic Decryption: Content
-     * @group hhvm
      */
     public function test()
     {
