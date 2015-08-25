@@ -358,7 +358,7 @@ class XMLSecurityKey
             } else {
 
             }
-        } else if ($this->cryptParams['cipher'] == MCRYPT_RIJNDAEL_128) {
+        } else if (defined('MCRYPT_RIJNDAEL_128') && $this->cryptParams['cipher'] == MCRYPT_RIJNDAEL_128) {
             /* Check key length */
             switch ($this->type) {
                 case (self::AES256_CBC):
@@ -448,9 +448,11 @@ class XMLSecurityKey
             $this->iv = openssl_random_pseudo_bytes($iv_length);
             $data = substr($data, $iv_length);
             if (!defined('OPENSSL_RAW_DATA')) {
-                define('OPENSSL_RAW_DATA', 1);
+                $options = 1;
+            } else {
+                $options = OPENSSL_RAW_DATA;
             }
-            $encrypted_data = openssl_encrypt($data, $this->cryptParams['digest'], $this->key, OPENSSL_RAW_DATA, $this->iv);
+            $encrypted_data = openssl_encrypt($data, $this->cryptParams['digest'], $this->key, $options, $this->iv);
         }
         return $encrypted_data;
     }
@@ -480,12 +482,12 @@ class XMLSecurityKey
             $this->iv  = substr($data,0,$ivSize);
             $dataEnc   = substr($data,$ivSize);
 
-
             $lib = new AES();
             $lib->setKeyLength(256);
             $lib->setBlockLength(128);
             $lib->setIV($this->iv);
             $lib->setKey($this->key);
+            $lib->setPreferredEngine(AES::ENGINE_OPENSSL);
 
             $decrypted = $lib->decrypt($dataEnc);
         }
