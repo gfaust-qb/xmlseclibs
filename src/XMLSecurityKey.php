@@ -354,12 +354,23 @@ class XMLSecurityKey
                 } else { //private
                     $this->key = openssl_get_privatekey($this->key, $this->passphrase);
                 }
-            } else if (in_array($this->cryptParams['digest'], array('AES192', 'AES256'))) {
-                $this->checkKeyLength();
+            } else {
 
             }
-        } else if ($this->cryptParams['cipher'] == MCRYPT_RIJNDAEL_128 || in_array($this->cryptParams['digest'], array('AES192', 'AES256'))) {
-            $this->checkKeyLength();
+        } else if ($this->cryptParams['cipher'] == MCRYPT_RIJNDAEL_128) {
+            /* Check key length */
+            switch ($this->type) {
+                case (self::AES256_CBC):
+                    if (strlen($this->key) < 25) {
+                        throw new XMLSecurityException('Key must contain at least 25 characters for this cipher');
+                    }
+                    break;
+                case (self::AES192_CBC):
+                    if (strlen($this->key) < 17) {
+                        throw new XMLSecurityException('Key must contain at least 17 characters for this cipher');
+                    }
+                    break;
+            }
         }
     }
 
@@ -463,7 +474,16 @@ class XMLSecurityKey
                 }
             }
         } else {
-            $decrypted = $this->openSSLDecrypt($data);
+            $ivSize    = openssl_cipher_iv_length($this->cryptParams['digest']);
+            $this->iv  = substr($data,0,$ivSize);
+            $data      = substr($data,$ivSize);
+            $key       = $this->key;
+            if (!defined('OPENSSL_RAW_DATA')) {
+                define('OPENSSL_RAW_DATA', 1);
+            }
+            $raw       = OPENSSL_RAW_DATA;
+            $digest    = $this->cryptParams['digest'];
+            $decrypted = openssl_decrypt($data, $digest, $key, $raw, $this->iv);
         }
         return $decrypted;
     }
@@ -702,100 +722,6 @@ class XMLSecurityKey
         $objKey->encryptedCtx = $objenc;
         XMLSecEnc::staticLocateKeyInfo($objKey, $element);
         return $objKey;
-    }
-
-    /**
-     * @param $data
-     * @return string
-     */
-    private function openSSLDecrypt($data)
-    {
-        $decrypted = '';
-        $cipher    = $this->getCipher();
-        $ivSize    = openssl_cipher_iv_length($cipher);
-        $this->iv  = substr($data, 0, $ivSize);
-        $iv        = $this->iv;
-        $key       = $this->key;
-        $blockSize = 128;
-        $dataEnc   = mb_substr($data, $ivSize);
-        if (!defined('OPENSSL_ZERO_PADDING')) {
-            define('OPENSSL_ZERO_PADDING', 2);
-        }
-        if (!defined('OPENSSL_RAW_DATA')) {
-            define('OPENSSL_RAW_DATA', 1);
-            $dataPad = str_pad($dataEnc, mb_strlen($dataEnc) + ($blockSize - mb_strlen($dataEnc) % $blockSize) % $blockSize, chr(0));
-            $substrDataEnc = mb_substr($dataEnc, -$blockSize);
-            $padding = str_repeat(chr($blockSize), $blockSize) ^ $substrDataEnc;
-            $lenPadding = strlen($padding);
-            $hasPadding = true;
-//            echo $padding;
-            $dataPad.= mb_substr(openssl_encrypt($padding, $cipher, $key, true, $iv), 0, $blockSize);
-//            echo $dataEnc;
-        }
-        $raw       = 1;//OPENSSL_RAW_DATA|OPENSSL_ZERO_PADDING; //OPENSSL_RAW_DATA;
-        if (empty($key)){
-            throw new XMLSecurityException('No key given.');
-        }
-        if (empty($iv)) {
-            throw new XMLSecurityException('Initialazing Vector may not be empty');
-        }
-        if (!empty($dataEnc)) {
-            $decrypted = openssl_decrypt($dataPad, $cipher, $key, $raw, $iv);
-            if ($decrypted === false) {
-                $errMsg = '';
-                while ($msg = openssl_error_string()) {
-                    $errMsg .= $msg . PHP_EOL;
-                }
-                throw new XMLSecurityException('openssl_decrypt() returns an error: ' . $errMsg);
-            }
-        }
-
-        if ($hasPadding) {
-                        //$decrypted = base64_encode($decrypted);
-                        $decryptedPad = substr($decrypted, 0, -$lenPadding);
-                        $decrypted = $decryptedPad;
-            //$decrypted = base64_decode($decrypted);
-
-            /*$length = ord($text[strlen($text) - 1]);
-                    if (!$length || $length > $this->block_size) {
-                        return false;
-                    }
-                    return substr($text, 0, -$length);*/
-        }
-
-        return rtrim($decrypted);
-    }
-
-    /**
-     * @return mixed
-     * @throws XMLSecurityException
-     */
-    private function getCipher()
-    {
-        $digest              = $this->cryptParams['digest'];
-        $ciphers_and_aliases = openssl_get_cipher_methods(true);
-        $cipher              = in_array($digest, $ciphers_and_aliases);
-        if (!$cipher) {
-            throw new XMLSecurityException('Unknown cipher method: ' . $digest);
-        }
-        return $digest;
-    }
-
-    private function checkKeyLength()
-    {
-        /* Check key length */
-        switch ($this->type) {
-            case (self::AES256_CBC):
-                if (strlen($this->key) < 25) {
-                    throw new XMLSecurityException('Key must contain at least 25 characters for this cipher');
-                }
-                break;
-            case (self::AES192_CBC):
-                if (strlen($this->key) < 17) {
-                    throw new XMLSecurityException('Key must contain at least 17 characters for this cipher');
-                }
-                break;
-        }
     }
 
 }

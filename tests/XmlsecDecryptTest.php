@@ -31,7 +31,7 @@ class XmlsecDecryptTest extends PHPUnit_Framework_TestCase {
                 $objenc = new XMLSecEnc();
                 $encData = $objenc->locateEncryptedData($doc);
 
-                $this->assertNotNull($encData);
+                $this->assertNotNull($encData, 'Encrypted Data.');
 
                 $objenc->setNode($encData);
                 $objenc->type = $encData->getAttribute("Type");
