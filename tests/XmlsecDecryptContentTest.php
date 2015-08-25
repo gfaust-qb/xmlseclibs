@@ -1,11 +1,11 @@
 <?php
 namespace RobRichards\XMLSecLibs;
 
-use PHPUnit_Framework_TestCase;
 use DOMDocument;
+use DOMException;
 use DOMNode;
 use Exception;
-use DOMException;
+use PHPUnit_Framework_TestCase;
 
 require_once(__DIR__ . '/../xmlseclibs.php');
 
@@ -13,6 +13,7 @@ class XmlsecDecryptContentTest extends PHPUnit_Framework_TestCase {
 
     /**
      * Basic Decryption: Content
+     * @group hhvm
      */
     public function test()
     {
