@@ -333,12 +333,12 @@ class XMLSecurityKey
                         /* Load the thumbprint if this is an X509 certificate. */
                         $this->X509Thumbprint = self::getRawThumbprint($this->key);
                     }
-                    $this->key = openssl_get_publickey($this->key);
+                    $this->key = openssl_pkey_get_public($this->key);
                     if (!$this->key) {
                         throw new XMLSecurityException('Unable to extract public key');
                     }
                 } else { //private
-                    $this->key = openssl_get_privatekey($this->key, $this->passphrase);
+                    $this->key = openssl_pkey_get_private($this->key, $this->passphrase);
                 }
             } else {
 
