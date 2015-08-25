@@ -16,10 +16,10 @@
   },
   "require": {
     "php": ">= 5.3",
-    "phpseclib/phpseclib": "2.0.*"
+    "phpseclib/phpseclib": "2.0.*",
+    "phpunit/phpunit": "4.8.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "4.8.*"
   },
   "suggest": {
     "ext/openssl": "OpenSSL extension",

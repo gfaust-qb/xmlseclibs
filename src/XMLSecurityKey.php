@@ -3,6 +3,7 @@ namespace RobRichards\XMLSecLibs;
 
 use DOMElement;
 use Exception;
+use phpseclib\Crypt\AES;
 
 /**
  * xmlseclibs.php
@@ -463,6 +464,7 @@ class XMLSecurityKey
      */
     private function decryptOpenSSL($data)
     {
+
         if (array_key_exists('type', $this->cryptParams) && !empty($this->cryptParams['type'])) {
             if ($this->cryptParams['type'] == 'public') {
                 if (!openssl_public_decrypt($data, $decrypted, $this->key, $this->cryptParams['padding'])) {
@@ -476,14 +478,16 @@ class XMLSecurityKey
         } else {
             $ivSize    = openssl_cipher_iv_length($this->cryptParams['digest']);
             $this->iv  = substr($data,0,$ivSize);
-            $data      = substr($data,$ivSize);
-            $key       = $this->key;
-            if (!defined('OPENSSL_RAW_DATA')) {
-                define('OPENSSL_RAW_DATA', 1);
-            }
-            $raw       = OPENSSL_RAW_DATA;
-            $digest    = $this->cryptParams['digest'];
-            $decrypted = openssl_decrypt($data, $digest, $key, $raw, $this->iv);
+            $dataEnc   = substr($data,$ivSize);
+
+
+            $lib = new AES();
+            $lib->setKeyLength(256);
+            $lib->setBlockLength(128);
+            $lib->setIV($this->iv);
+            $lib->setKey($this->key);
+
+            $decrypted = $lib->decrypt($dataEnc);
         }
         return $decrypted;
     }
