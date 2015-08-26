@@ -16,7 +16,7 @@ matrix:
     
 script:
   #- composer self-update;
-  - composer update --ignore-platform-reqs --with-dependencies --prefer-lowest;
+  - composer update --ignore-platform-reqs --with-dependencies;
   - if [[ $EXECUTE_COVERAGE == 'true' ]]; then phpunit --coverage-clover clover.xml tests; fi
   - if [[ $EXECUTE_COVERAGE != 'true' ]]; then phpunit --group hhvm tests; fi
 
