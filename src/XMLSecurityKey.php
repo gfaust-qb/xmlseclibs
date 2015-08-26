@@ -4,6 +4,7 @@ namespace RobRichards\XMLSecLibs;
 use DOMElement;
 use Exception;
 use phpseclib\Crypt\AES;
+use phpseclib\Crypt\TripleDES;
 
 /**
  * xmlseclibs.php
@@ -333,12 +334,12 @@ class XMLSecurityKey
                         /* Load the thumbprint if this is an X509 certificate. */
                         $this->X509Thumbprint = self::getRawThumbprint($this->key);
                     }
-                    $this->key = openssl_get_publickey($this->key);
+                    $this->key = openssl_pkey_get_public($this->key);
                     if (!$this->key) {
                         throw new XMLSecurityException('Unable to extract public key');
                     }
                 } else { //private
-                    $this->key = openssl_get_privatekey($this->key, $this->passphrase);
+                    $this->key = openssl_pkey_get_private($this->key, $this->passphrase);
                 }
             } else {
 
@@ -400,18 +401,7 @@ class XMLSecurityKey
                 }
             }
         } else {
-            $ivSize    = openssl_cipher_iv_length($this->cryptParams['digest']);
-            $this->iv  = substr($data,0,$ivSize);
-            $dataEnc   = substr($data,$ivSize);
-
-            $lib = new AES();
-            $lib->setKeyLength(256);
-            $lib->setBlockLength(128);
-            $lib->setIV($this->iv);
-            $lib->setKey($this->key);
-            $lib->setPreferredEngine(AES::ENGINE_OPENSSL);
-
-            $decrypted = $lib->decrypt($dataEnc);
+            $decrypted = $this->decryptPHPSeclib($data);
         }
         return $decrypted;
     }
@@ -640,6 +630,45 @@ class XMLSecurityKey
         $objKey->encryptedCtx = $objenc;
         XMLSecEnc::staticLocateKeyInfo($objKey, $element);
         return $objKey;
+    }
+
+    /**
+     * @param $data
+     * @return String
+     */
+    private function decryptPHPSeclib($data)
+    {
+        $ivSize   = openssl_cipher_iv_length($this->cryptParams['digest']);
+        $this->iv = substr($data, 0, $ivSize);
+        $dataEnc  = substr($data, $ivSize);
+
+        $digestParams = explode('-', $this->cryptParams['digest']);
+
+        // At the moment there is only support for CBC-Mode.
+        switch($digestParams[0]) {
+            case 'AES':
+                $lib = new AES();
+                $lib->setKeyLength($digestParams[1]);
+                $lib->setBlockLength(128);
+                break;
+            case 'DES':
+                if ($digestParams[1] === 'EDE3') {
+                    $lib = new TripleDES();
+                } else {
+                    throw new XMLSecurityException('Unsupported DES Mode: ' . $digestParams[1]);
+                }
+                break;
+            default:
+                throw new XMLSecurityException('Not supported cipher.');
+        }
+
+        $lib->setIV($this->iv);
+        $lib->setKey($this->key);
+        //$lib->setPreferredEngine(AES::ENGINE_OPENSSL);
+
+        $decrypted = $lib->decrypt($dataEnc);
+
+        return $decrypted;
     }
 
 }
