@@ -369,13 +369,12 @@ class XMLSecurityKey
         } else {
             $iv_length = openssl_cipher_iv_length($this->cryptParams['digest']);
             $this->iv = openssl_random_pseudo_bytes($iv_length);
-            $data = substr($data, $iv_length);
             if (!defined('OPENSSL_RAW_DATA')) {
                 $options = 1;
             } else {
                 $options = OPENSSL_RAW_DATA;
             }
-            $encrypted_data = openssl_encrypt($data, $this->cryptParams['digest'], $this->key, $options, $this->iv);
+            $encrypted_data = $this->iv . openssl_encrypt($data, $this->cryptParams['digest'], $this->key, $options, $this->iv);
         }
         return $encrypted_data;
     }
